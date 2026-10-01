@@ -1,0 +1,119 @@
+---
+import { SITE } from '../config';
+---
+<form id="demo-form" class="form" action="https://api.web3forms.com/submit" method="POST" novalidate>
+  <input type="hidden" name="access_key" value={SITE.web3formsKey} />
+  <input type="hidden" name="subject" value="TunFortune : nouvelle demande de démo" />
+  <input type="hidden" name="from_name" value="Site TunFortune" />
+  <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
+
+  <div class="grid">
+    <label>
+      <span>Nom et prénom</span>
+      <input name="nom" type="text" autocomplete="name" required />
+    </label>
+    <label>
+      <span>Cabinet</span>
+      <input name="cabinet" type="text" autocomplete="organization" required />
+    </label>
+    <label>
+      <span>Email professionnel</span>
+      <input name="email" type="email" autocomplete="email" required />
+    </label>
+    <label>
+      <span>Téléphone <em>(facultatif)</em></span>
+      <input name="telephone" type="tel" autocomplete="tel" />
+    </label>
+    <label>
+      <span>Ville</span>
+      <input name="ville" type="text" autocomplete="address-level2" required />
+    </label>
+    <label>
+      <span>Clients potentiellement concernés par l'ISF</span>
+      <select name="dossiers_isf" required>
+        <option value="">Choisir une estimation</option>
+        <option>Moins de 5</option>
+        <option>5 à 20</option>
+        <option>21 à 50</option>
+        <option>Plus de 50</option>
+        <option>Je ne sais pas encore</option>
+      </select>
+    </label>
+  </div>
+
+  <label class="full">
+    <span>Votre principale question sur l'ISF <em>(facultatif)</em></span>
+    <textarea name="message" rows="4"></textarea>
+  </label>
+
+  <label class="consent">
+    <input type="checkbox" name="consentement" value="oui" required />
+    <span>J'accepte que ces informations soient utilisées pour me recontacter au sujet de TunFortune. <a href="/confidentialite">Politique de confidentialité</a></span>
+  </label>
+
+  <button class="btn btn-primary" type="submit">Envoyer ma demande de démo</button>
+  <p class="status" role="status" aria-live="polite"></p>
+</form>
+
+<script>
+  const form = document.getElementById('demo-form') as HTMLFormElement | null;
+  const status = form?.querySelector('.status') as HTMLElement | null;
+  const button = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+
+  form?.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    if (!form || !status || !button) return;
+    status.className = 'status';
+
+    if (!form.checkValidity()) {
+      const first = form.querySelector(':invalid') as HTMLElement | null;
+      status.textContent = 'Complétez les champs obligatoires et cochez la case de consentement pour envoyer la demande.';
+      status.classList.add('is-error');
+      first?.focus();
+      return;
+    }
+
+    button.disabled = true;
+    button.textContent = 'Envoi en cours';
+    try {
+      const res = await fetch(form.action, {
+        method: 'POST',
+        headers: { Accept: 'application/json' },
+        body: new FormData(form),
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success) throw new Error(data.message || 'Erreur');
+      form.reset();
+      status.textContent = 'Demande envoyée. Nous vous recontactons sous 48 heures ouvrées pour fixer la démo.';
+      status.classList.add('is-ok');
+      button.textContent = 'Demande envoyée';
+    } catch {
+      status.innerHTML = 'La demande n\'a pas pu être envoyée. Réessayez, ou écrivez directement à <a href="mailto:contact@tunfortune.tn">contact@tunfortune.tn</a>.';
+      status.classList.add('is-error');
+      button.disabled = false;
+      button.textContent = 'Envoyer ma demande de démo';
+    }
+  });
+</script>
+
+<style>
+  .form { color: var(--ink); background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: clamp(1.25rem, 3vw, 2rem); }
+  .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr)); gap: 1.1rem 1.25rem; margin-bottom: 1.1rem; }
+  label { display: flex; flex-direction: column; gap: 0.35rem; font-size: var(--step--1); font-weight: 600; }
+  label em { font-style: normal; font-weight: 400; color: var(--muted); }
+  .full { margin-bottom: 1.1rem; }
+  input:not([type="checkbox"]), select, textarea {
+    font: 400 1rem/1.4 var(--sans); color: var(--ink);
+    padding: 0.7rem 0.8rem; border: 1.5px solid var(--line); border-radius: 6px; background: #fff; width: 100%;
+  }
+  input:focus, select:focus, textarea:focus { border-color: var(--navy); outline: 3px solid color-mix(in srgb, var(--navy) 25%, transparent); outline-offset: 0; }
+  textarea { resize: vertical; }
+  .consent { flex-direction: row; align-items: flex-start; gap: 0.6rem; font-weight: 400; margin-bottom: 1.4rem; }
+  .consent input { margin-top: 0.25rem; width: 1.1rem; height: 1.1rem; accent-color: var(--navy); flex: none; }
+  .hp { position: absolute; left: -9999px; }
+  button[disabled] { opacity: 0.7; cursor: progress; }
+  .status { margin: 1rem 0 0; font-size: var(--step--1); }
+  .status:empty { display: none; }
+  .status.is-ok { color: #1f6b45; font-weight: 600; }
+  .status.is-error { color: #a1261b; font-weight: 600; }
+</style>

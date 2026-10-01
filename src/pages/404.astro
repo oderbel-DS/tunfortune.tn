@@ -1,0 +1,14 @@
+---
+import Base from '../layouts/Base.astro';
+---
+<Base title="Page introuvable" noindex>
+  <section class="wrap nf">
+    <h1>Cette page n'existe pas.</h1>
+    <p>Le lien est peut-être incomplet. Revenez à l'accueil pour découvrir TunFortune ou demander une démo.</p>
+    <a class="btn btn-primary" href="/">Retour à l'accueil</a>
+  </section>
+</Base>
+<style>
+  .nf { padding-block: clamp(4rem, 12vw, 8rem); }
+  .nf h1 { font-size: var(--step-3); }
+</style>

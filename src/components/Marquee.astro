@@ -1,0 +1,29 @@
+---
+// Bandeau de texte défilant (décoratif, masqué aux lecteurs d'écran).
+interface Props { items: string[] }
+const { items } = Astro.props;
+const star = `<svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.3"><path d="M6 6h12v12H6z"/><path d="M12 3.5 20.5 12 12 20.5 3.5 12z"/></svg>`;
+const run = [...items, ...items];
+---
+<div class="marquee" aria-hidden="true">
+  <div class="rail">
+    {[0, 1].map(() => (
+      <div class="group">
+        {run.map((t) => (<><span class="word">{t}</span><span class="star" set:html={star} /></>))}
+      </div>
+    ))}
+  </div>
+</div>
+
+<style>
+  .marquee { background: var(--navy-2); color: var(--gold); overflow: hidden; border-block: 1px solid rgba(200,169,107,0.2); padding: 1.1rem 0; }
+  .rail { display: flex; width: max-content; }
+  .group { display: flex; align-items: center; flex: none; }
+  .word { font: italic 500 clamp(1.8rem, 1.2rem + 2vw, 3rem)/1 var(--serif); white-space: nowrap; padding: 0 1.75rem; }
+  .star { display: inline-grid; opacity: 0.7; }
+  @media (prefers-reduced-motion: no-preference) {
+    .rail { animation: scroll 60s linear infinite; }
+    .marquee:hover .rail { animation-play-state: paused; }
+  }
+  @keyframes scroll { to { transform: translateX(-50%); } }
+</style>

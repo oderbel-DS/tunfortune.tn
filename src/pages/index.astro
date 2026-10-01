@@ -1,0 +1,394 @@
+---
+import Base from '../layouts/Base.astro';
+import PilotForm from '../components/PilotForm.astro';
+import Marquee from '../components/Marquee.astro';
+import ModuleCard from '../components/ModuleCard.astro';
+import { SITE } from '../config';
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'SoftwareApplication',
+  name: 'TunFortune',
+  applicationCategory: 'BusinessApplication',
+  operatingSystem: 'Web',
+  url: SITE.url,
+  description: SITE.description,
+  inLanguage: 'fr-TN',
+  areaServed: { '@type': 'Country', name: 'Tunisie' },
+  audience: { '@type': 'BusinessAudience', audienceType: "Cabinets d'expertise comptable" },
+};
+
+// Motif géométrique tunisien (étoile à huit branches), utilisé en filigrane.
+const motif = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='#c8a96b' stroke-width='1'><path d='M28 28h40v40H28z'/><path d='M48 19.7 76.3 48 48 76.3 19.7 48z'/><path d='M48 0v19.7M48 76.3V96M0 48h19.7M76.3 48H96M0 0l28 28M96 0 68 28M0 96l28-28M96 96 68 68'/></svg>`
+)}")`;
+---
+<Base>
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+  <!-- 1. Manifeste -->
+  <section class="hero" style={`--motif:${motif}`}>
+    <h1 class="manifesto">
+        <span class="line"><span>Tout le monde parle de l'ISF.</span></span>
+        <span class="line"><span>Votre cabinet, lui, le <em>prépare</em>.</span></span>
+      </h1>
+    <div class="hero-foot-wrap">
+      <div class="hero-foot">
+        <p class="lede">
+          TunFortune est la plateforme des cabinets d'expertise comptable pour qualifier le patrimoine de leurs
+          clients, le valoriser avec l'aide de l'IA, simuler l'impôt et produire le formulaire officiel.
+        </p>
+        <div class="hero-cta">
+          <div class="actions">
+            <a class="cta-gold" href="#demo">Demander une démo <span aria-hidden="true">→</span></a>
+            <a class="cta-ghost" href="#produit">Voir le produit</a>
+          </div>
+          <ul class="proof">
+            <li>Article 88 de la loi de finances 2026</li>
+            <li>Note commune n°13/2026</li>
+            <li>Formulaire officiel en arabe</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <Marquee items={['Patrimoine', 'Évaluation immobilière', 'Simulation ISF × IRPP × Patrimoine', 'Déclaration ISF', 'Déclaration IRPP']} />
+
+  <!-- 2. Le produit -->
+  <section id="produit" class="product">
+    <div class="product-head reveal">
+      <p class="kicker">Le produit</p>
+      <h2 class="product-title">
+        <span class="line">Tout le dossier fiscal patrimonial d'un client,</span>
+        <span class="line"><em>sur une seule plateforme</em>.</span>
+      </h2>
+    </div>
+    <div class="wrap carousel-bar">
+      <div class="carousel-nav">
+        <button type="button" class="nav-btn" data-dir="-1" aria-label="Module précédent">←</button>
+        <button type="button" class="nav-btn" data-dir="1" aria-label="Module suivant">→</button>
+      </div>
+    </div>
+
+    <div class="track-wrap">
+      <ul class="track" id="track" aria-label="Modules de la plateforme">
+        <ModuleCard title="Patrimoine" icon="patrimoine"
+          text="Saisissez les actifs, les dettes et les indivisions de chaque client. TunFortune applique les règles de territorialité et de dettes déductibles et calcule la base imposable.">
+          <div class="v-rows">
+            <p><span>Villa, Gammarth</span><b>2 900 000</b></p>
+            <p><span>Appartement, Les Berges du Lac</span><b>1 480 000</b></p>
+            <p><span>Participations</span><b>1 170 000</b></p>
+            <p class="neg"><span>Dettes déductibles</span><b>− 310 000</b></p>
+          </div>
+        </ModuleCard>
+
+        <ModuleCard title="Évaluation immobilière" icon="immo" badge="IA"
+          text="Pour chaque bien, l'IA propose une estimation de sa valeur, que vous mettez à jour chaque année pour la nouvelle campagne. Vous ajustez l'estimation et validez la valeur retenue, conservée dans le dossier avec sa justification.">
+          <div class="v-estim">
+            <p class="v-label">Estimation proposée pour 2027</p>
+            <p class="v-big">1 480 000 <small>TND</small></p>
+            <p class="v-prev">Valeur retenue en 2026 : 1 395 000 TND</p>
+            <p class="v-btns"><span>Ajuster</span><span class="dark">Valider la valeur</span></p>
+          </div>
+        </ModuleCard>
+
+        <ModuleCard title="Simulation ISF × IRPP × Patrimoine" icon="simulation"
+          text="Construisez un tableau emplois-ressources et comparez plusieurs scénarios ISF et IRPP pour un même client. De quoi préparer un vrai rendez-vous de conseil, chiffres à l'appui, avant le fait générateur.">
+          <div class="v-bars">
+            <p><span>Situation actuelle</span><i style="--w:92%"></i></p>
+            <p><span>Scénario 1</span><i style="--w:74%"></i></p>
+            <p><span>Scénario 2</span><i style="--w:58%" class="best"></i></p>
+          </div>
+        </ModuleCard>
+
+        <ModuleCard title="Déclaration ISF" icon="formulaire"
+          text="Les calculs validés sont figés et tracés. La déclaration est générée au format du formulaire officiel, en arabe, prête à être revue et signée.">
+          <div class="v-doc">
+            <div class="doc">
+              <i style="--w:70%"></i><i style="--w:92%"></i><i style="--w:55%"></i><i style="--w:84%"></i><i style="--w:40%"></i>
+            </div>
+            <p class="lock">Calcul figé et tracé</p>
+          </div>
+        </ModuleCard>
+
+        <ModuleCard title="Déclaration IRPP" icon="irpp" badge="Bientôt" soon
+          text="Salaires, revenus fonciers et revenus de capitaux mobiliers, exercice par exercice, sur les mêmes données client. Module en cours de finalisation.">
+          <div class="v-rows muted">
+            <p><span>Salaires</span><b>2026</b></p>
+            <p><span>Revenus fonciers</span><b>2026</b></p>
+            <p><span>Capitaux mobiliers</span><b>2026</b></p>
+          </div>
+        </ModuleCard>
+      </ul>
+    </div>
+    <p class="wrap track-note">Illustrations de la plateforme, données fictives.</p>
+  </section>
+
+  <!-- 3. Énoncé -->
+  <section class="statement" style={`--motif:${motif}`}>
+    <p class="big reveal">
+      <span class="line">Un logiciel ne remplace pas</span>
+      <span class="line">votre jugement. <em>Il le documente.</em></span>
+    </p>
+    <div class="wrap">
+      <p class="sub reveal">
+        Chaque règle de calcul est rattachée à sa source : article de loi, section de la note commune, rubrique du
+        formulaire. Quand un texte est silencieux, la position retenue est écrite noir sur blanc. Et c'est toujours
+        votre cabinet qui valide.
+      </p>
+    </div>
+  </section>
+
+  <!-- 4. Contexte -->
+  <section class="context">
+    <div class="context-full">
+      <h2 class="reveal">
+        <span class="line">Un nouvel impôt, <em>une première campagne</em></span>
+        <span class="line">à préparer maintenant.</span>
+      </h2>
+      <div class="context-cols reveal">
+        <p>
+          La loi n°2025-17 portant loi de finances pour 2026 a introduit un impôt sur la fortune. Pour la première
+          campagne, vos clients vont vous demander s'ils sont concernés, combien ils devront payer et ce qu'ils
+          peuvent encore faire avant le 1<sup>er</sup> janvier.
+        </p>
+        <p>
+          Répondre dossier par dossier sur tableur prend du temps, et la Note commune n°13/2026 laisse plusieurs
+          points d'interprétation ouverts. TunFortune intègre ces règles, documente les positions retenues et vous
+          laisse le dernier mot sur chaque dossier.
+        </p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Programme pilote -->
+  <section id="pilote" class="pilot">
+    <div class="pilot-head reveal">
+      <p class="kicker">Programme pilote 2026</p>
+      <h2>
+        <span class="line">Quelques cabinets,</span>
+        <span class="line"><em>une première campagne</em> accompagnée.</span>
+      </h2>
+      <p class="pilot-intro">
+        Les cabinets pilotes orientent les priorités du produit et bénéficient de conditions préférentielles.
+      </p>
+    </div>
+    <div class="wrap">
+      <ol class="steps">
+        <li class="reveal"><h3>Démo de 30 minutes</h3><p>En visioconférence, sur un dossier fictif proche de vos cas réels.</p></li>
+        <li class="reveal"><h3>Essai sur vos dossiers</h3><p>Vous testez la qualification et la simulation sur quelques clients.</p></li>
+        <li class="reveal"><h3>Engagement pilote</h3><p>Si l'outil vous convient, vous rejoignez le pilote par une simple lettre d'intention.</p></li>
+        <li class="reveal"><h3>Mise en service</h3><p>Paramétrage de votre cabinet et accompagnement pendant la campagne.</p></li>
+      </ol>
+      <p class="pricing reveal">
+        <strong>Tarifs.</strong> Abonnement annuel par cabinet, calculé selon le nombre de dossiers actifs, en trois
+        formules : Starter, Cabinet et Cabinet+. Les tarifs sont présentés lors de la démo.
+      </p>
+    </div>
+  </section>
+
+  <!-- 6. Appel final + formulaire -->
+  <section id="demo" class="demo" style={`--motif:${motif}`}>
+    <h2 class="demo-title reveal">
+      <span class="line"><em>Parlons de votre cabinet.</em></span>
+    </h2>
+    <div class="wrap demo-grid">
+      <div class="demo-copy reveal">
+        <p>Laissez vos coordonnées. Nous vous proposons un créneau de démonstration.</p>
+        <p class="alt">Vous préférez écrire ? <a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+      </div>
+      <div class="reveal"><PilotForm /></div>
+    </div>
+  </section>
+</Base>
+
+<script>
+  // Défilement du carrousel des modules avec les flèches
+  const track = document.getElementById('track');
+  document.querySelectorAll<HTMLButtonElement>('.nav-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      if (!track) return;
+      const card = track.querySelector('li');
+      const step = card ? card.getBoundingClientRect().width + 20 : 400;
+      track.scrollBy({ left: step * Number(btn.dataset.dir), behavior: 'smooth' });
+    });
+  });
+</script>
+
+<style>
+  sup { font-size: 0.55em; line-height: 0; }
+  h2 em, .manifesto em, .big em { font-style: italic; font-weight: 500; color: var(--gold); }
+  .kicker { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-ink); margin: 0 0 1rem; }
+
+  /* 1. Manifeste */
+  .hero {
+    position: relative; overflow: hidden; isolation: isolate;
+    background: var(--navy); color: #fff;
+    padding: clamp(4rem, 10vw, 8.5rem) 0 clamp(3.5rem, 7vw, 5.5rem);
+  }
+  .hero::before {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    background-image: var(--motif); background-size: 96px; opacity: 0.08;
+    -webkit-mask-image: radial-gradient(60% 80% at 85% 20%, #000 15%, transparent 70%);
+            mask-image: radial-gradient(60% 80% at 85% 20%, #000 15%, transparent 70%);
+  }
+  .hero::after {
+    content: ''; position: absolute; z-index: -1; width: 50rem; height: 50rem; right: -15rem; top: -18rem;
+    background: radial-gradient(closest-side, rgba(200,169,107,0.15), transparent);
+  }
+  /* Le manifeste occupe toute la largeur de la page : la taille suit la largeur de l'écran */
+  .manifesto {
+    font-size: calc((100vw - 2 * var(--gutter)) / 10.75); font-weight: 500; line-height: 0.98; letter-spacing: -0.02em;
+    margin: 0 0 clamp(2.5rem, 6vw, 4.5rem); max-width: none; padding-inline: var(--gutter); white-space: nowrap;
+  }
+  @media (max-width: 700px) {
+    .manifesto { font-size: clamp(2.6rem, 1rem + 7vw, 3.4rem); white-space: normal; }
+  }
+  .manifesto .line { display: block; overflow: hidden; padding-bottom: 0.08em; }
+  .manifesto .line > span { display: inline-block; }
+  @media (prefers-reduced-motion: no-preference) {
+    .manifesto .line > span { animation: up 1000ms cubic-bezier(.2,.7,.2,1) both; }
+    .manifesto .line:nth-child(2) > span { animation-delay: 140ms; }
+    .hero-foot { animation: fade 900ms ease 500ms both; }
+  }
+  @keyframes up { from { transform: translateY(105%); } to { transform: none; } }
+  @keyframes fade { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  /* Bas du hero : pleine largeur et centré */
+  .hero-foot-wrap { padding-inline: var(--gutter); }
+  .hero-foot { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 2.5rem; border-top: 1px solid rgba(255,255,255,0.12); }
+  .lede { font-size: clamp(1.15rem, 0.9rem + 0.9vw, 1.6rem); line-height: 1.55; color: #c6cfdb; margin: 0 0 2rem; max-width: none; }
+  .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 1.4rem; }
+  .cta-gold, .cta-ghost { font: 600 0.95rem/1 var(--sans); padding: 1.05rem 1.5rem; border-radius: 999px; text-decoration: none; transition: background-color 200ms ease, border-color 200ms ease; }
+  .cta-gold { background: var(--gold); color: var(--navy); }
+  .cta-gold:hover { background: #d6ba82; }
+  .cta-ghost { color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  .cta-ghost:hover { border-color: #fff; }
+  .proof { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: 0.5rem 1.3rem; font-size: 0.85rem; color: #9aa6b8; }
+  .proof li { display: inline-flex; align-items: center; gap: 0.5rem; }
+  .proof li::before { content: ''; width: 0.7rem; height: 0.4rem; border-left: 1.5px solid var(--gold); border-bottom: 1.5px solid var(--gold); transform: rotate(-45deg) translateY(-2px); }
+
+  /* 2. Produit */
+  .product { padding: clamp(4.5rem, 9vw, 7.5rem) 0 clamp(3.5rem, 7vw, 5rem); scroll-margin-top: 4.5rem; }
+  /* Titre du produit sur toute la largeur de la page */
+  .product-head { padding-inline: var(--gutter); text-align: center; }
+  .product-head .kicker { max-width: none; }
+  .product-title { font-size: calc((100vw - 2 * var(--gutter)) / 16.9); line-height: 1; letter-spacing: -0.015em; margin: 0; max-width: none; white-space: nowrap; }
+  .product-title .line { display: block; }
+  .product-title em { color: var(--gold-ink); }
+  @media (max-width: 700px) {
+    .product-title { font-size: clamp(2.2rem, 1rem + 5vw, 2.8rem); white-space: normal; }
+    .product-title .line { display: inline; }
+  }
+  .carousel-bar { display: flex; justify-content: flex-end; margin: 1.75rem auto 1.5rem; }
+  .carousel-nav { display: flex; gap: 0.6rem; flex: none; }
+  .nav-btn { width: 3.2rem; height: 3.2rem; border-radius: 50%; border: 1px solid #cfd6e0; background: #fff; color: var(--navy); font-size: 1.15rem; cursor: pointer; transition: background-color 200ms ease, color 200ms ease, border-color 200ms ease; }
+  .nav-btn:hover { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .track-wrap { overflow: hidden; }
+  .track {
+    list-style: none; margin: 0; display: flex; gap: 20px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 0.5rem max(var(--gutter), calc((100vw - var(--wrap)) / 2)) 1.5rem;
+    scroll-padding-inline: max(var(--gutter), calc((100vw - var(--wrap)) / 2));
+    scrollbar-width: none;
+  }
+  .track::-webkit-scrollbar { display: none; }
+  .track-note { max-width: none; font-size: 0.8rem; color: var(--muted); margin-top: 0.5rem; }
+  @media (max-width: 640px) { .carousel-nav { display: none; } }
+
+  /* Illustrations des cartes */
+  .v-rows { display: grid; gap: 8px; }
+  .v-rows p { display: flex; justify-content: space-between; gap: 1rem; margin: 0; padding: 9px 12px; background: #fff; border: 1px solid var(--line); border-radius: 8px; font-size: 12.5px; }
+  .v-rows b { font: 600 15px/1.2 var(--serif); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+  .v-rows .neg b { color: #9b3b2e; }
+  .v-rows.muted p { color: var(--muted); border-style: dashed; }
+  .v-estim { background: #fff; border: 1px solid var(--line); border-radius: 10px; padding: 14px 16px; }
+  .v-label { margin: 0 0 6px; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
+  .v-big { margin: 0 0 6px; font: 600 30px/1 var(--serif); font-variant-numeric: lining-nums; }
+  .v-big small { font: 600 11px var(--sans); color: var(--gold-ink); }
+  .v-prev { margin: 0 0 12px; font-size: 11.5px; color: var(--muted); }
+  .v-btns { display: flex; justify-content: flex-end; gap: 6px; margin: 0; }
+  .v-btns span { font-size: 11px; font-weight: 600; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; }
+  .v-btns .dark { background: var(--navy); color: #fff; border-color: var(--navy); }
+  .v-bars { display: grid; gap: 14px; }
+  .v-bars p { margin: 0; display: grid; gap: 6px; font-size: 12px; color: var(--muted); }
+  .v-bars i { display: block; height: 10px; width: var(--w); border-radius: 99px; background: #cfd6e0; }
+  .v-bars i.best { background: linear-gradient(90deg, var(--navy-2), var(--gold)); }
+  .v-doc { display: grid; gap: 10px; }
+  .doc { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: grid; gap: 9px; justify-items: end; }
+  .doc i { display: block; height: 7px; width: var(--w); border-radius: 4px; background: #dfe4ec; }
+  .lock { margin: 0; justify-self: start; font-size: 11px; font-weight: 600; color: var(--navy); background: #f1e8d4; border: 1px solid #e0cda3; border-radius: 999px; padding: 4px 10px; }
+
+  /* 3. Énoncé */
+  .statement { position: relative; isolation: isolate; overflow: hidden; background: var(--navy); color: #fff; padding: clamp(5rem, 11vw, 9rem) 0; }
+  .statement::before { content: ''; position: absolute; inset: 0; z-index: -1; background-image: var(--motif); background-size: 96px; opacity: 0.06; -webkit-mask-image: linear-gradient(90deg, transparent, #000 60%); mask-image: linear-gradient(90deg, transparent, #000 60%); }
+  /* Énoncé sur toute la largeur de la page */
+  .big { font: 500 calc((100vw - 2 * var(--gutter)) / 11.6)/1 var(--serif); letter-spacing: -0.015em; max-width: none; margin: 0 0 2.5rem; padding-inline: var(--gutter); white-space: nowrap; }
+  .big .line { display: block; }
+  @media (max-width: 700px) {
+    .big { font-size: clamp(2.3rem, 1rem + 6vw, 3rem); white-space: normal; }
+    .big .line { display: inline; }
+  }
+  .sub { font-size: 1.1rem; line-height: 1.7; color: #b7c1d0; max-width: 58ch; margin: 0 0 0 auto; }
+
+  /* 4. Contexte */
+  .context { padding: clamp(4.5rem, 9vw, 7.5rem) 0; }
+  /* Contexte sur toute la largeur de la page */
+  .context-full { padding-inline: var(--gutter); }
+  .context h2 { font-size: calc((100vw - 2 * var(--gutter)) / 15); line-height: 1; letter-spacing: -0.015em; margin: 0 0 clamp(2rem, 4vw, 3rem); max-width: none; white-space: nowrap; }
+  .context h2 .line { display: block; }
+  .context h2 em { color: var(--gold-ink); }
+  .context-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(2rem, 6vw, 6rem); padding-top: 2rem; border-top: 1px solid var(--line); }
+  .context-cols p { color: var(--muted); font-size: 1.05rem; line-height: 1.75; margin: 0; max-width: none; }
+  @media (max-width: 700px) {
+    .context h2 { font-size: clamp(2.2rem, 1rem + 5vw, 2.8rem); white-space: normal; }
+    .context h2 .line { display: inline; }
+    .context-cols { grid-template-columns: 1fr; gap: 1.25rem; }
+  }
+
+  /* 5. Pilote */
+  .pilot { background: #fff; border-block: 1px solid var(--line); padding: clamp(4.5rem, 9vw, 7.5rem) 0; }
+  /* En-tête du pilote sur toute la largeur de la page */
+  .pilot-head { padding-inline: var(--gutter); }
+  .pilot-head h2 { font-size: calc((100vw - 2 * var(--gutter)) / 13.55); line-height: 1; letter-spacing: -0.015em; max-width: none; white-space: nowrap; margin-bottom: 1.5rem; }
+  .pilot-head h2 .line { display: block; }
+  .pilot-head h2 em { color: var(--gold-ink); }
+  .pilot-intro { color: var(--muted); font-size: 1.15rem; max-width: none; margin: 0; }
+  @media (max-width: 700px) {
+    .pilot-head h2 { font-size: clamp(2.2rem, 1rem + 5vw, 2.8rem); white-space: normal; }
+    .pilot-head h2 .line { display: inline; }
+  }
+  .steps { list-style: none; counter-reset: step; margin: 3rem 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+  .steps li { counter-increment: step; padding: 1.75rem 1.5rem 0 0; }
+  .steps li:not(:first-child) { padding-left: 1.5rem; border-left: 1px solid var(--line); }
+  .steps li::before { content: '0' counter(step); display: block; font: 500 3.2rem/1 var(--serif); color: var(--gold); font-variant-numeric: lining-nums; margin-bottom: 1rem; }
+  .steps h3 { font-size: 1.45rem; margin-bottom: 0.35rem; }
+  .steps p { font-size: 0.9rem; color: var(--muted); margin: 0; }
+  .steps li:nth-child(2) { transition-delay: 100ms; } .steps li:nth-child(3) { transition-delay: 200ms; } .steps li:nth-child(4) { transition-delay: 300ms; }
+  @media (max-width: 900px) {
+    .steps { grid-template-columns: 1fr 1fr; }
+    .steps li:nth-child(3) { border-left: 0; padding-left: 0; }
+  }
+  @media (max-width: 520px) {
+    .steps { grid-template-columns: 1fr; }
+    .steps li, .steps li:not(:first-child) { border-left: 0; padding-left: 0; padding-bottom: 1.25rem; border-bottom: 1px solid var(--line); }
+  }
+  .pricing { margin: 0; padding: 1.25rem 1.5rem; background: var(--paper); border-left: 3px solid var(--gold); border-radius: 0 12px 12px 0; color: var(--muted); max-width: 60rem; }
+  .pricing strong { color: var(--ink); }
+
+  /* 6. Démo */
+  .demo { position: relative; isolation: isolate; overflow: hidden; background: var(--navy); color: #fff; padding: clamp(4.5rem, 9vw, 7.5rem) 0; scroll-margin-top: 4.5rem; }
+  .demo::before { content: ''; position: absolute; inset: 0; z-index: -1; background-image: var(--motif); background-size: 96px; opacity: 0.06; -webkit-mask-image: radial-gradient(50% 70% at 10% 30%, #000, transparent 70%); mask-image: radial-gradient(50% 70% at 10% 30%, #000, transparent 70%); }
+  .demo-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(2.5rem, 6vw, 5rem); align-items: start; }
+  /* Appel final sur toute la largeur de la page */
+  .demo-title { font-size: calc((100vw - 2 * var(--gutter)) / 8.45); line-height: 1; letter-spacing: -0.015em; max-width: none; white-space: nowrap; padding-inline: var(--gutter); margin: 0 0 clamp(2.5rem, 5vw, 4rem); }
+  .demo-title .line { display: block; }
+  @media (max-width: 700px) {
+    .demo-title { font-size: clamp(2.3rem, 1rem + 6vw, 3rem); white-space: normal; }
+    .demo-title .line { display: inline; }
+  }
+  .demo-copy p:first-child { font-size: 1.15rem; }
+  .demo-copy p { color: #b7c1d0; }
+  .demo .alt a { color: var(--gold); }
+  @media (max-width: 900px) { .demo-grid { grid-template-columns: 1fr; } }
+</style>

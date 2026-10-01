@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://tunfortune.tn/sitemap-index.xml
+Sitemap: https://tunfortune.com/sitemap-index.xml

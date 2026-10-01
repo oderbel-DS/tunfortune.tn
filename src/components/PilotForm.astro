@@ -1,7 +1,7 @@
 ---
 import { SITE } from '../config';
 ---
-<form id="demo-form" class="form" action="https://api.web3forms.com/submit" method="POST" novalidate>
+<form id="demo-form" class="form" data-email={SITE.email} action="https://api.web3forms.com/submit" method="POST" novalidate>
   <input type="hidden" name="access_key" value={SITE.web3formsKey} />
   <input type="hidden" name="subject" value="TunFortune : nouvelle demande de démo" />
   <input type="hidden" name="from_name" value="Site TunFortune" />
@@ -88,7 +88,8 @@ import { SITE } from '../config';
       status.classList.add('is-ok');
       button.textContent = 'Demande envoyée';
     } catch {
-      status.innerHTML = 'La demande n\'a pas pu être envoyée. Réessayez, ou écrivez directement à <a href="mailto:contact@tunfortune.tn">contact@tunfortune.tn</a>.';
+      const email = form.dataset.email || '';
+      status.innerHTML = `La demande n'a pas pu être envoyée. Réessayez, ou écrivez directement à <a href="mailto:${email}">${email}</a>.`;
       status.classList.add('is-error');
       button.disabled = false;
       button.textContent = 'Envoyer ma demande de démo';

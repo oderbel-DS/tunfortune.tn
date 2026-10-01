@@ -2,7 +2,7 @@
 export const SITE = {
   name: 'TunFortune',
   url: 'https://tunfortune.com',
-  email: 'contact@tunfortune.com',
+  email: 'oussama.derbel@gmail.com',
   // Clé gratuite à obtenir sur https://web3forms.com (envoyée par email).
   web3formsKey: 'REMPLACER_PAR_VOTRE_CLE_WEB3FORMS',
   description:

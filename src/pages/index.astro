@@ -18,6 +18,41 @@ const jsonLd = {
   audience: { '@type': 'BusinessAudience', audienceType: "Cabinets d'expertise comptable" },
 };
 
+// Questions fréquentes : affichées dans la section FAQ et déclarées aux moteurs de recherche.
+// TODO : ajouter une question sur l'hébergement et la confidentialité des données une fois les engagements arrêtés.
+const faq = [
+  {
+    q: 'Combien coûte TunFortune ?',
+    a: "Un abonnement annuel par cabinet, calculé selon le nombre de dossiers actifs, en trois formules : Starter, Cabinet et Cabinet+. Les tarifs sont présentés lors de la démo, et les cabinets du programme pilote bénéficient de conditions préférentielles.",
+  },
+  {
+    q: 'Faut-il installer un logiciel ?',
+    a: "Non. TunFortune s'utilise dans le navigateur, sans installation sur les postes du cabinet.",
+  },
+  {
+    q: 'Qui valide les calculs ?',
+    a: "Votre cabinet, toujours. Chaque règle de calcul est rattachée à sa source (article de loi, section de la note commune, rubrique du formulaire) et, quand un texte est silencieux, la position retenue est écrite noir sur blanc. Les calculs validés sont ensuite figés et tracés.",
+  },
+  {
+    q: 'La déclaration produite est-elle conforme au formulaire officiel ?',
+    a: "La déclaration est générée au format du formulaire officiel, en arabe, prête à être revue et signée par votre cabinet.",
+  },
+  {
+    q: "Et l'IRPP ?",
+    a: "Le module Déclaration IRPP (salaires, revenus fonciers, revenus de capitaux mobiliers) est en cours de finalisation. Il s'appuie sur les mêmes données client que le module ISF.",
+  },
+  {
+    q: 'Combien de temps faut-il pour démarrer ?',
+    a: "La démo dure 30 minutes en visioconférence. Vous pouvez ensuite tester la plateforme sur quelques dossiers, puis nous paramétrons votre cabinet et vous accompagnons pendant la campagne.",
+  },
+];
+
+const faqLd = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faq.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+};
+
 // Motif géométrique tunisien (étoile à huit branches), utilisé en filigrane.
 const motif = `url("data:image/svg+xml,${encodeURIComponent(
   `<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='#c8a96b' stroke-width='1'><path d='M28 28h40v40H28z'/><path d='M48 19.7 76.3 48 48 76.3 19.7 48z'/><path d='M48 0v19.7M48 76.3V96M0 48h19.7M76.3 48H96M0 0l28 28M96 0 68 28M0 96l28-28M96 96 68 68'/></svg>`
@@ -25,6 +60,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
 ---
 <Base>
   <script slot="head" type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+  <script slot="head" type="application/ld+json" set:html={JSON.stringify(faqLd)} />
 
   <!-- 1. Manifeste -->
   <section class="hero" style={`--motif:${motif}`}>
@@ -60,7 +96,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
     <div class="product-head reveal">
       <p class="kicker">Le produit</p>
       <h2 class="product-title">
-        <span class="line">Tout le dossier fiscal patrimonial d'un client,</span>
+        <span class="line">Tout le dossier fiscal patrimonial d'un client,</span>{' '}
         <span class="line"><em>sur une seule plateforme</em>.</span>
       </h2>
     </div>
@@ -73,7 +109,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
 
     <div class="track-wrap">
       <ul class="track" id="track" aria-label="Modules de la plateforme">
-        <ModuleCard title="Patrimoine" icon="patrimoine"
+        <ModuleCard title="Patrimoine" icon="patrimoine" id="module-patrimoine"
           text="Saisissez les actifs, les dettes et les indivisions de chaque client. TunFortune applique les règles de territorialité et de dettes déductibles et calcule la base imposable.">
           <div class="v-rows">
             <p><span>Villa, Gammarth</span><b>2 900 000</b></p>
@@ -83,7 +119,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
           </div>
         </ModuleCard>
 
-        <ModuleCard title="Évaluation immobilière" icon="immo" badge="IA"
+        <ModuleCard title="Évaluation immobilière" icon="immo" id="module-evaluation" badge="IA"
           text="Pour chaque bien, l'IA propose une estimation de sa valeur, que vous mettez à jour chaque année pour la nouvelle campagne. Vous ajustez l'estimation et validez la valeur retenue, conservée dans le dossier avec sa justification.">
           <div class="v-estim">
             <p class="v-label">Estimation proposée pour 2027</p>
@@ -93,7 +129,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
           </div>
         </ModuleCard>
 
-        <ModuleCard title="Simulation ISF × IRPP × Patrimoine" icon="simulation"
+        <ModuleCard title="Simulation ISF × IRPP × Patrimoine" icon="simulation" id="module-simulation"
           text="Construisez un tableau emplois-ressources et comparez plusieurs scénarios ISF et IRPP pour un même client. De quoi préparer un vrai rendez-vous de conseil, chiffres à l'appui, avant le fait générateur.">
           <div class="v-bars">
             <p><span>Situation actuelle</span><i style="--w:92%"></i></p>
@@ -102,7 +138,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
           </div>
         </ModuleCard>
 
-        <ModuleCard title="Déclaration ISF" icon="formulaire"
+        <ModuleCard title="Déclaration ISF" icon="formulaire" id="module-isf"
           text="Les calculs validés sont figés et tracés. La déclaration est générée au format du formulaire officiel, en arabe, prête à être revue et signée.">
           <div class="v-doc">
             <div class="doc">
@@ -112,7 +148,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
           </div>
         </ModuleCard>
 
-        <ModuleCard title="Déclaration IRPP" icon="irpp" badge="Bientôt" soon
+        <ModuleCard title="Déclaration IRPP" icon="irpp" id="module-irpp" badge="Bientôt" soon
           text="Salaires, revenus fonciers et revenus de capitaux mobiliers, exercice par exercice, sur les mêmes données client. Module en cours de finalisation.">
           <div class="v-rows muted">
             <p><span>Salaires</span><b>2026</b></p>
@@ -128,7 +164,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
   <!-- 3. Énoncé -->
   <section class="statement" style={`--motif:${motif}`}>
     <p class="big reveal">
-      <span class="line">Un logiciel ne remplace pas</span>
+      <span class="line">Un logiciel ne remplace pas</span>{' '}
       <span class="line">votre jugement. <em>Il le documente.</em></span>
     </p>
     <div class="wrap">
@@ -144,7 +180,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
   <section class="context">
     <div class="context-full">
       <h2 class="reveal">
-        <span class="line">Un nouvel impôt, <em>une première campagne</em></span>
+        <span class="line">Un nouvel impôt, <em>une première campagne</em></span>{' '}
         <span class="line">à préparer maintenant.</span>
       </h2>
       <div class="context-cols reveal">
@@ -167,7 +203,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
     <div class="pilot-head reveal">
       <p class="kicker">Programme pilote 2026</p>
       <h2>
-        <span class="line">Quelques cabinets,</span>
+        <span class="line">Quelques cabinets,</span>{' '}
         <span class="line"><em>une première campagne</em> accompagnée.</span>
       </h2>
       <p class="pilot-intro">
@@ -188,7 +224,26 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
     </div>
   </section>
 
-  <!-- 6. Appel final + formulaire -->
+  <!-- 6. Questions fréquentes -->
+  <section id="faq" class="faq">
+    <div class="wrap faq-grid">
+      <div class="faq-head reveal">
+        <p class="kicker">Questions fréquentes</p>
+        <h2>Ce que les cabinets <em>nous demandent</em>.</h2>
+        <p class="faq-more">Une autre question ? <a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+      </div>
+      <div class="faq-list reveal">
+        {faq.map(({ q, a }) => (
+          <details>
+            <summary>{q}</summary>
+            <p>{a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- 7. Appel final + formulaire -->
   <section id="demo" class="demo" style={`--motif:${motif}`}>
     <h2 class="demo-title reveal">
       <span class="line"><em>Parlons de votre cabinet.</em></span>
@@ -258,7 +313,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
   /* Bas du hero : pleine largeur et centré */
   .hero-foot-wrap { padding-inline: var(--gutter); }
   .hero-foot { display: flex; flex-direction: column; align-items: center; text-align: center; padding-top: 2.5rem; border-top: 1px solid rgba(255,255,255,0.12); }
-  .lede { font-size: clamp(1.15rem, 0.9rem + 0.9vw, 1.6rem); line-height: 1.55; color: #c6cfdb; margin: 0 0 2rem; max-width: none; }
+  .lede { font-size: clamp(1.15rem, 0.9rem + 0.9vw, 1.6rem); line-height: 1.55; color: #c6cfdb; margin: 0 0 2rem; max-width: 62ch; text-wrap: balance; }
   .actions { display: flex; flex-wrap: wrap; justify-content: center; gap: 0.75rem; margin-bottom: 1.4rem; }
   .cta-gold, .cta-ghost { font: 600 0.95rem/1 var(--sans); padding: 1.05rem 1.5rem; border-radius: 999px; text-decoration: none; transition: background-color 200ms ease, border-color 200ms ease; }
   .cta-gold { background: var(--gold); color: var(--navy); }
@@ -376,7 +431,26 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
   .pricing { margin: 0; padding: 1.25rem 1.5rem; background: var(--paper); border-left: 3px solid var(--gold); border-radius: 0 12px 12px 0; color: var(--muted); max-width: 60rem; }
   .pricing strong { color: var(--ink); }
 
-  /* 6. Démo */
+  /* 6. FAQ */
+  .faq { padding: clamp(4.5rem, 9vw, 7.5rem) 0; scroll-margin-top: 4.5rem; }
+  .faq-grid { display: grid; grid-template-columns: minmax(0, 0.85fr) minmax(0, 1.15fr); gap: clamp(2rem, 6vw, 5rem); align-items: start; }
+  .faq-head h2 em { color: var(--gold-ink); }
+  .faq-more { color: var(--muted); }
+  .faq-list { border-top: 1px solid var(--line); }
+  .faq details { border-bottom: 1px solid var(--line); }
+  .faq summary {
+    display: flex; justify-content: space-between; align-items: center; gap: 1.5rem;
+    padding: 1.35rem 0; cursor: pointer; list-style: none;
+    font: 600 1.4rem/1.25 var(--serif); color: var(--ink);
+  }
+  .faq summary::-webkit-details-marker { display: none; }
+  .faq summary::after { content: '+'; flex: none; font: 400 1.6rem/1 var(--sans); color: var(--gold-ink); transition: transform 200ms ease; }
+  .faq details[open] summary::after { transform: rotate(45deg); }
+  .faq summary:hover { color: var(--navy-2); }
+  .faq details p { color: var(--muted); margin: -0.35rem 0 1.4rem; max-width: 60ch; }
+  @media (max-width: 900px) { .faq-grid { grid-template-columns: 1fr; } }
+
+  /* 7. Démo */
   .demo { position: relative; isolation: isolate; overflow: hidden; background: var(--navy); color: #fff; padding: clamp(4.5rem, 9vw, 7.5rem) 0; scroll-margin-top: 4.5rem; }
   .demo::before { content: ''; position: absolute; inset: 0; z-index: -1; background-image: var(--motif); background-size: 96px; opacity: 0.06; -webkit-mask-image: radial-gradient(50% 70% at 10% 30%, #000, transparent 70%); mask-image: radial-gradient(50% 70% at 10% 30%, #000, transparent 70%); }
   .demo-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); gap: clamp(2.5rem, 6vw, 5rem); align-items: start; }

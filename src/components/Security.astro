@@ -1,0 +1,56 @@
+---
+// BROUILLON — section « Sécurité et confidentialité des données ».
+// Non affichée : à importer dans src/pages/index.astro (après la section « Énoncé ») une fois chaque
+// passage entre crochets remplacé par un engagement réel et vérifiable. Ne rien publier qui ne soit pas vrai.
+const points = [
+  {
+    title: 'Hébergement',
+    text: "Les données sont hébergées chez [hébergeur], dans [pays / région], sur des serveurs [certifiés ISO 27001 / autre].",
+  },
+  {
+    title: 'Chiffrement',
+    text: "Les échanges sont chiffrés (HTTPS) et les données sont chiffrées au repos [préciser].",
+  },
+  {
+    title: 'Cloisonnement',
+    text: "Les dossiers de chaque cabinet sont isolés : aucun autre cabinet n'y a accès. [Préciser les rôles et droits au sein du cabinet.]",
+  },
+  {
+    title: 'Secret professionnel',
+    text: "L'équipe TunFortune n'accède pas aux dossiers clients, sauf demande expresse du cabinet pour une assistance. [À confirmer.]",
+  },
+  {
+    title: 'Réversibilité',
+    text: "Vous pouvez exporter vos données à tout moment ; elles sont supprimées [sous X jours] après la fin de l'abonnement.",
+  },
+  {
+    title: 'Traçabilité',
+    text: "Les calculs validés sont figés et chaque modification est tracée, avec son auteur et sa date.",
+  },
+];
+---
+<section id="securite" class="security">
+  <div class="wrap">
+    <div class="sec-head reveal">
+      <p class="kicker">Sécurité et confidentialité</p>
+      <h2>Les données de vos clients <em>restent les vôtres</em>.</h2>
+    </div>
+    <ul class="sec-grid">
+      {points.map(({ title, text }) => (
+        <li class="reveal"><h3>{title}</h3><p>{text}</p></li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .security { padding: clamp(4.5rem, 9vw, 7.5rem) 0; }
+  .kicker { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-ink); margin: 0 0 1rem; }
+  h2 em { font-style: italic; font-weight: 500; color: var(--gold-ink); }
+  .sec-grid { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
+  .sec-grid li { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 1.5rem; }
+  .sec-grid h3 { font-size: 1.45rem; margin-bottom: 0.4rem; }
+  .sec-grid p { color: var(--muted); font-size: 0.93rem; margin: 0; }
+  @media (max-width: 900px) { .sec-grid { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 560px) { .sec-grid { grid-template-columns: 1fr; } }
+</style>

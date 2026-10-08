@@ -1,0 +1,39 @@
+<!doctype html>
+<!-- Modèle de l'image de partage public/og.png (1200 × 630).
+     Régénérer : chrome --headless=new --hide-scrollbars --window-size=1200,630 --screenshot=public/og.png scripts/og.html -->
+<html lang="fr">
+<head>
+<meta charset="utf-8" />
+<style>
+  @font-face { font-family: 'Cormorant Garamond'; font-weight: 500; src: url(../node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-500-normal.woff2); }
+  @font-face { font-family: 'Cormorant Garamond'; font-weight: 500; font-style: italic; src: url(../node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-500-italic.woff2); }
+  @font-face { font-family: 'Cormorant Garamond'; font-weight: 700; src: url(../node_modules/@fontsource/cormorant-garamond/files/cormorant-garamond-latin-700-normal.woff2); }
+  @font-face { font-family: 'Inter'; font-weight: 500; src: url(../node_modules/@fontsource/inter/files/inter-latin-500-normal.woff2); }
+  html, body { margin: 0; width: 1200px; height: 630px; overflow: hidden; }
+  body {
+    position: relative; box-sizing: border-box; padding: 72px 80px;
+    background: #0b1220; color: #fff; font-family: 'Inter', sans-serif;
+    display: flex; flex-direction: column; justify-content: space-between;
+  }
+  body::before {
+    content: ''; position: absolute; inset: 0; opacity: 0.09;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='%23c8a96b' stroke-width='1'%3E%3Cpath d='M28 28h40v40H28z'/%3E%3Cpath d='M48 19.7 76.3 48 48 76.3 19.7 48z'/%3E%3Cpath d='M48 0v19.7M48 76.3V96M0 48h19.7M76.3 48H96M0 0l28 28M96 0 68 28M0 96l28-28M96 96 68 68'/%3E%3C/svg%3E");
+    -webkit-mask-image: radial-gradient(60% 90% at 90% 15%, #000 15%, transparent 70%);
+  }
+  .mark { position: relative; font: 700 44px/1 'Cormorant Garamond', serif; letter-spacing: -0.01em; }
+  .mark span, em { color: #c8a96b; }
+  h1 { position: relative; margin: 0; font: 500 84px/1.02 'Cormorant Garamond', serif; letter-spacing: -0.02em; }
+  em { font-style: italic; }
+  .foot { position: relative; display: flex; justify-content: space-between; align-items: center; padding-top: 28px; border-top: 1px solid rgba(255,255,255,0.14); font-size: 24px; color: #c6cfdb; }
+  .foot b { color: #c8a96b; font-weight: 500; }
+</style>
+</head>
+<body>
+  <div class="mark">TunFortune<span>.</span></div>
+  <h1>Tout le monde parle de l'ISF.<br />Votre cabinet, lui, le <em>prépare</em>.</h1>
+  <div class="foot">
+    <span>La fiscalité du patrimoine pour les cabinets d'expertise comptable</span>
+    <b>tunfortune.com</b>
+  </div>
+</body>
+</html>

@@ -1,14 +1,51 @@
 ---
 import Base from '../layouts/Base.astro';
+import { SITE } from '../config';
+
+// Même motif en filigrane que la page d'accueil.
+const motif = `url("data:image/svg+xml,${encodeURIComponent(
+  `<svg xmlns='http://www.w3.org/2000/svg' width='96' height='96' fill='none' stroke='#c8a96b' stroke-width='1'><path d='M28 28h40v40H28z'/><path d='M48 19.7 76.3 48 48 76.3 19.7 48z'/><path d='M48 0v19.7M48 76.3V96M0 48h19.7M76.3 48H96M0 0l28 28M96 0 68 28M0 96l28-28M96 96 68 68'/></svg>`
+)}")`;
 ---
 <Base title="Page introuvable" noindex>
-  <section class="wrap nf">
-    <h1>Cette page n'existe pas.</h1>
-    <p>Le lien est peut-être incomplet. Revenez à l'accueil pour découvrir TunFortune ou demander une démo.</p>
-    <a class="btn btn-primary" href="/">Retour à l'accueil</a>
+  <section class="nf" style={`--motif:${motif}`}>
+    <div class="wrap">
+      <p class="code" aria-hidden="true">404</p>
+      <h1>Cette page <em>n'existe pas</em>.</h1>
+      <p class="lead">Le lien est peut-être incomplet ou la page a été déplacée. Revenez à l'accueil pour découvrir TunFortune ou demander une démo.</p>
+      <div class="actions">
+        <a class="cta-gold" href="/">Retour à l'accueil</a>
+        <a class="cta-ghost" href="/#demo">Demander une démo</a>
+      </div>
+      <p class="alt">Une question ? <a href={`mailto:${SITE.email}`}>{SITE.email}</a></p>
+    </div>
   </section>
 </Base>
+
 <style>
-  .nf { padding-block: clamp(4rem, 12vw, 8rem); }
-  .nf h1 { font-size: var(--step-3); }
+  .nf {
+    position: relative; isolation: isolate; overflow: hidden;
+    background: var(--navy); color: #fff;
+    padding-block: clamp(5rem, 14vw, 10rem);
+    min-height: calc(100svh - 4.5rem);
+    display: grid; align-content: center;
+  }
+  .nf::before {
+    content: ''; position: absolute; inset: 0; z-index: -1;
+    background-image: var(--motif); background-size: 96px; opacity: 0.08;
+    -webkit-mask-image: radial-gradient(60% 80% at 85% 20%, #000 15%, transparent 70%);
+            mask-image: radial-gradient(60% 80% at 85% 20%, #000 15%, transparent 70%);
+  }
+  .code { margin: 0 0 0.5rem; font: 500 clamp(5rem, 14vw, 9rem)/1 var(--serif); color: transparent; -webkit-text-stroke: 1px rgba(200,169,107,0.6); font-variant-numeric: lining-nums; }
+  h1 { font-size: var(--step-4); margin-bottom: 1.25rem; }
+  h1 em { font-style: italic; color: var(--gold); }
+  .lead { color: #c6cfdb; font-size: 1.15rem; max-width: 52ch; margin-bottom: 2rem; }
+  .actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-bottom: 1.75rem; }
+  .cta-gold, .cta-ghost { font: 600 0.95rem/1 var(--sans); padding: 1.05rem 1.5rem; border-radius: 999px; text-decoration: none; transition: background-color 200ms ease, border-color 200ms ease; }
+  .cta-gold { background: var(--gold); color: var(--navy); }
+  .cta-gold:hover { background: #d6ba82; }
+  .cta-ghost { color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+  .cta-ghost:hover { border-color: #fff; }
+  .alt { color: #9aa6b8; font-size: 0.9rem; margin: 0; }
+  .alt a { color: var(--gold); }
 </style>

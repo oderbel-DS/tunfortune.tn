@@ -16,8 +16,7 @@ npm run build    # génère dist/
 1. **Clé Web3Forms** dans `src/config.ts` : créer une clé gratuite sur https://web3forms.com avec l'adresse qui doit recevoir les demandes.
 2. **Page confidentialité** (`src/pages/confidentialite.astro`) : remplacer les passages entre crochets (raison sociale, adresse, matricule fiscal, date, durée de conservation).
 3. **Textes** : relire la page d'accueil, notamment le paragraphe de présentation du fondateur, le délai de rappel annoncé après envoi du formulaire (`src/components/PilotForm.astro`) et le nom du programme pilote.
-4. **Aperçu produit** (`src/components/Marquee         bandeau de texte défilant
-src/components/ModuleCard      carte de module du carrousel (illustrations fictives)
+4. **Sécurité des données** (`src/components/Security.astro`) : brouillon non affiché. Remplacer les passages entre crochets par vos engagements réels, puis l'importer dans `src/pages/index.astro`. Ajouter alors une question sur les données dans la FAQ (`faq`, en tête de `src/pages/index.astro`).
 5. **Domaine** : si le domaine change de `tunfortune.com`, le modifier dans `astro.config.mjs`, `src/config.ts` et `public/robots.txt`.
 
 ## Mise en ligne gratuite sur Cloudflare Pages
@@ -44,5 +43,8 @@ src/components/PilotForm       formulaire de demande de démo
 src/pages/index.astro          page d'accueil
 src/pages/confidentialite.astro
 src/pages/404.astro
+public/og.png                  image de partage (LinkedIn, WhatsApp…), générée depuis scripts/og.html
+public/apple-touch-icon.png    icône iOS, générée depuis scripts/apple-touch-icon.html
+src/components/Security        brouillon de la section sécurité (non affiché)
 scripts/apercu.py             génère un aperçu autonome en un seul fichier HTML (après npm run build)
 ```

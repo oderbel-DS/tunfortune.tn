@@ -6,5 +6,5 @@ export const SITE = {
   // Clé gratuite à obtenir sur https://web3forms.com (envoyée par email).
   web3formsKey: '8c1e8580-6a42-4a1b-887f-71c10c0d0a5e',
   description:
-    "Logiciel pour cabinets d'expertise comptable : qualification, simulation et déclaration de l'impôt sur la fortune (article 88, loi de finances 2026).",
+    "Logiciel pour cabinets d'expertise comptable : simulation ISF et IRPP, estimation immobilière par IA et déclaration au format officiel (article 88, loi de finances 2026).",
 };

@@ -3,6 +3,9 @@ import Base from '../layouts/Base.astro';
 import PilotForm from '../components/PilotForm.astro';
 import Marquee from '../components/Marquee.astro';
 import ModuleCard from '../components/ModuleCard.astro';
+import Security from '../components/Security.astro';
+import { Image } from 'astro:assets';
+import casDonation from '../assets/cas-donation-conjoint.png';
 import { SITE } from '../config';
 
 const jsonLd = {
@@ -47,6 +50,18 @@ const faq = [
   },
 ];
 
+// Familles du catalogue des leviers du diagnostic (30 fiches, cf. libs/diagnostic/seeds de la plateforme).
+const familles = [
+  { lettre: 'A', titre: 'Épargne et placements', detail: 'CEA, CEI, assurance-vie, intérêts, obligations et BTA' },
+  { lettre: 'B', titre: 'Famille et logement', detail: 'Chef de famille, parents et enfants à charge, prêt logement' },
+  { lettre: 'C', titre: "Assiette de l'ISF", detail: 'Biens professionnels, résidence principale' },
+  { lettre: 'D', titre: 'Organisation du patrimoine', detail: "Dettes, transmission au conjoint, seuil, impôt payé à l'étranger" },
+  { lettre: 'E', titre: 'Souscriptions au capital', detail: 'Zones de développement, agriculture, secteurs prioritaires, startups' },
+  { lettre: 'F', titre: "Revenus d'activité", detail: 'Exonérations de démarrage, zones de développement, agriculture, export, forfait ou réel' },
+  { lettre: 'G', titre: 'Immobilier', detail: "Logement étudiant, cession, droits d'enregistrement" },
+  { lettre: 'H', titre: 'Arbitrages', detail: 'Salaire ou dividendes, amnistie de la loi de finances 2026' },
+];
+
 const faqLd = {
   '@context': 'https://schema.org',
   '@type': 'FAQPage',
@@ -89,7 +104,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
     </div>
   </section>
 
-  <Marquee items={['Patrimoine', 'Évaluation immobilière', 'Simulation ISF × IRPP × Patrimoine', 'Déclaration ISF', 'Déclaration IRPP']} />
+  <Marquee items={['Patrimoine', 'Évaluation immobilière', 'Simulation ISF × IRPP × Patrimoine', "Diagnostic d'optimisation", 'Déclaration ISF', 'Déclaration IRPP']} />
 
   <!-- 2. Le produit -->
   <section id="produit" class="product">
@@ -163,6 +178,59 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
     <p class="wrap track-note">Illustrations de la plateforme, données fictives.</p>
   </section>
 
+  <!-- 2 bis. Diagnostic d'optimisation -->
+  <section id="diagnostic" class="diag">
+    <div class="wrap">
+      <div class="diag-head reveal">
+        <p class="kicker">Diagnostic d'optimisation</p>
+        <h2>30 leviers légaux, <em>passés en revue pour chaque client</em>.</h2>
+        <p class="diag-intro">
+          Pour un client et un exercice, TunFortune vérifie les conditions de chaque levier sur les données du dossier,
+          puis chiffre les pistes applicables avec le même moteur que la simulation. Chaque piste indique sa base
+          légale, les paramètres fiscaux utilisés et les points à vérifier par l'expert-comptable.
+        </p>
+      </div>
+
+      <div class="diag-grid">
+        <ul class="familles reveal" aria-label="Familles de leviers">
+          {familles.map(({ lettre, titre, detail }) => (
+            <li><span class="lettre" aria-hidden="true">{lettre}</span><div><h3>{titre}</h3><p>{detail}</p></div></li>
+          ))}
+        </ul>
+        <ol class="diag-steps reveal">
+          <li><h3>Repérer</h3><p>Chaque condition est évaluée : remplie, non remplie ou indéterminée faute d'information dans le dossier.</p></li>
+          <li><h3>Chiffrer</h3><p>Le gain de chaque piste est calculé par le moteur de simulation, avec les paramètres fiscaux de l'année.</p></li>
+          <li><h3>Approfondir</h3><p>La piste retenue devient un scénario complet, à comparer avec la situation actuelle. Votre cabinet décide.</p></li>
+        </ol>
+      </div>
+
+      <figure class="case reveal">
+        <div class="case-copy">
+          <p class="kicker">Exemple</p>
+          <h3>Donation d'un immeuble de rapport au conjoint</h3>
+          <p>
+            Un couple marié détient 3,6 millions de dinars de patrimoine. Le scénario simule la donation de l'immeuble
+            à l'épouse : le patrimoine du foyer reste le même, sa répartition change. L'outil chiffre l'impôt avant et
+            après, le coût de l'opération, et signale les points à vérifier.
+          </p>
+          <dl class="case-figs">
+            <div><dt>ISF du foyer</dt><dd>18 000 → 0 <small>TND</small></dd></div>
+            <div><dt>Droits et frais</dt><dd>4 000 <small>TND</small></dd></div>
+            <div class="net"><dt>Gain net estimé</dt><dd>14 000 <small>TND</small></dd></div>
+          </dl>
+        </div>
+        <div class="case-shot">
+          <Image src={casDonation} widths={[640, 1000, 1400]} sizes="(max-width: 900px) 100vw, 60vw"
+            alt="Détail du scénario dans TunFortune : tableau avant et après pour le déclarant, le conjoint et le foyer, gain net et avertissements à vérifier par l'expert-comptable." />
+        </div>
+        <figcaption>
+          Capture de la plateforme. Exemple fictif à visée illustrative : simulation indicative, sans valeur de conseil.
+          Un acte à but exclusivement fiscal peut être requalifié par l'administration.
+        </figcaption>
+      </figure>
+    </div>
+  </section>
+
   <!-- 3. Énoncé -->
   <section class="statement" style={`--motif:${motif}`}>
     <p class="big reveal">
@@ -177,6 +245,8 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
       </p>
     </div>
   </section>
+
+  <Security />
 
   <!-- 4. Contexte -->
   <section class="context">
@@ -376,6 +446,43 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
   .doc { background: #fff; border: 1px solid var(--line); border-radius: 8px; padding: 14px; display: grid; gap: 9px; justify-items: end; }
   .doc i { display: block; height: 7px; width: var(--w); border-radius: 4px; background: #dfe4ec; }
   .lock { margin: 0; justify-self: start; font-size: 11px; font-weight: 600; color: var(--navy); background: #f1e8d4; border: 1px solid #e0cda3; border-radius: 999px; padding: 4px 10px; }
+
+  /* 2 bis. Diagnostic */
+  .diag { background: #fff; border-block: 1px solid var(--line); padding: clamp(4.5rem, 9vw, 7.5rem) 0; scroll-margin-top: 4.5rem; }
+  .diag-head h2 { max-width: 22ch; }
+  .diag-head h2 em, .case h3 em { color: var(--gold-ink); }
+  .diag-intro { color: var(--muted); font-size: 1.1rem; line-height: 1.7; max-width: 62ch; margin: 0; }
+  .diag-grid { display: grid; grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr); gap: clamp(2rem, 5vw, 4.5rem); margin: 3rem 0 clamp(3.5rem, 7vw, 5rem); align-items: start; }
+  .familles { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); border-top: 1px solid var(--line); }
+  .familles li { display: flex; gap: 0.9rem; padding: 1.1rem 1rem 1.1rem 0; border-bottom: 1px solid var(--line); }
+  .familles .lettre { flex: none; display: grid; place-items: center; width: 2.1rem; height: 2.1rem; border-radius: 8px; font: 600 1.15rem/1 var(--serif); color: var(--gold-ink); background: #f6efe0; border: 1px solid #e8d9b8; }
+  .familles h3 { font-size: 1.2rem; margin: 0 0 0.15rem; }
+  .familles p { font-size: 0.85rem; color: var(--muted); margin: 0; }
+  .diag-steps { list-style: none; counter-reset: step; margin: 0; padding: 1.75rem; background: var(--paper); border-radius: 16px; display: grid; gap: 1.4rem; }
+  .diag-steps li { counter-increment: step; display: grid; grid-template-columns: 2.4rem 1fr; column-gap: 0.75rem; }
+  .diag-steps li::before { content: '0' counter(step); grid-row: span 2; font: 500 1.9rem/1 var(--serif); color: var(--gold); font-variant-numeric: lining-nums; }
+  .diag-steps h3 { font-size: 1.35rem; margin: 0 0 0.2rem; }
+  .diag-steps p { font-size: 0.9rem; color: var(--muted); margin: 0; }
+  .case { margin: 0; display: grid; grid-template-columns: minmax(0, 0.8fr) minmax(0, 1.2fr); gap: clamp(2rem, 5vw, 4rem); align-items: center; padding-top: clamp(2.5rem, 5vw, 3.5rem); border-top: 1px solid var(--line); }
+  .case h3 { font-size: clamp(1.7rem, 1.2rem + 1.4vw, 2.3rem); line-height: 1.1; margin: 0 0 1rem; }
+  .case-copy > p:not(.kicker) { color: var(--muted); margin: 0 0 1.75rem; }
+  .case-figs { margin: 0; display: grid; gap: 0.6rem; }
+  .case-figs div { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; padding: 0.8rem 1rem; border: 1px solid var(--line); border-radius: 10px; }
+  .case-figs dt { font-size: 0.9rem; color: var(--muted); }
+  .case-figs dd { margin: 0; font: 600 1.45rem/1 var(--serif); font-variant-numeric: lining-nums tabular-nums; white-space: nowrap; }
+  .case-figs small { font: 600 0.7rem var(--sans); color: var(--gold-ink); }
+  .case-figs .net { background: var(--navy); border-color: var(--navy); }
+  .case-figs .net dt { color: #c6cfdb; }
+  .case-figs .net dd { color: var(--gold); }
+  .case-shot { border: 1px solid var(--line); border-radius: 14px; overflow: hidden; box-shadow: 0 30px 60px -35px rgba(11,18,32,0.4); }
+  .case-shot img { display: block; width: 100%; height: auto; }
+  .case figcaption { grid-column: 1 / -1; font-size: 0.8rem; color: var(--muted); }
+  @media (max-width: 900px) {
+    .diag-grid, .case { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 560px) {
+    .familles { grid-template-columns: 1fr; }
+  }
 
   /* 3. Énoncé */
   .statement { position: relative; isolation: isolate; overflow: hidden; background: var(--navy); color: #fff; padding: clamp(5rem, 11vw, 9rem) 0; }

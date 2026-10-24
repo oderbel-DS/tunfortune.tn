@@ -1,31 +1,32 @@
 ---
-// BROUILLON — section « Sécurité et confidentialité des données ».
-// Non affichée : à importer dans src/pages/index.astro (après la section « Énoncé ») une fois chaque
-// passage entre crochets remplacé par un engagement réel et vérifiable. Ne rien publier qui ne soit pas vrai.
+// Section « Sécurité et confidentialité des données ».
+// Chaque point est vérifié dans le code de la plateforme. Ne rien publier qui ne soit pas vrai :
+// hébergement (hébergeur, pays), réversibilité (export, durée de conservation) et accès de l'équipe
+// aux dossiers restent à ajouter une fois les engagements arrêtés.
 const points = [
   {
-    title: 'Hébergement',
-    text: "Les données sont hébergées chez [hébergeur], dans [pays / région], sur des serveurs [certifiés ISO 27001 / autre].",
+    title: 'Échanges chiffrés',
+    text: "Toutes les communications entre le navigateur et la plateforme passent par une connexion chiffrée (HTTPS).",
   },
   {
-    title: 'Chiffrement',
-    text: "Les échanges sont chiffrés (HTTPS) et les données sont chiffrées au repos [préciser].",
+    title: 'CIN chiffrée',
+    text: "Le numéro de CIN est chiffré dans la base de données (AES-256-GCM). Il n'apparaît jamais en clair dans les journaux techniques.",
   },
   {
     title: 'Cloisonnement',
-    text: "Les dossiers de chaque cabinet sont isolés : aucun autre cabinet n'y a accès. [Préciser les rôles et droits au sein du cabinet.]",
+    text: "Chaque requête est filtrée sur le cabinet de l'utilisateur : les dossiers d'un cabinet ne sont jamais visibles par un autre.",
   },
   {
-    title: 'Secret professionnel',
-    text: "L'équipe TunFortune n'accède pas aux dossiers clients, sauf demande expresse du cabinet pour une assistance. [À confirmer.]",
+    title: 'Comptes nominatifs',
+    text: "Chaque collaborateur se connecte avec son propre compte, via une authentification centralisée (OpenID Connect), avec un rôle d'administrateur ou de collaborateur.",
   },
   {
-    title: 'Réversibilité',
-    text: "Vous pouvez exporter vos données à tout moment ; elles sont supprimées [sous X jours] après la fin de l'abonnement.",
+    title: 'Journal d’audit',
+    text: "Chaque création ou modification est journalisée avec son auteur, sa date et les valeurs avant et après. Une entrée du journal, une fois écrite, ne peut plus être modifiée.",
   },
   {
-    title: 'Traçabilité',
-    text: "Les calculs validés sont figés et chaque modification est tracée, avec son auteur et sa date.",
+    title: 'Déclarations figées',
+    text: "Une déclaration ISF validée est verrouillée par la base de données elle-même, et pas seulement par l'application : son contenu ne peut plus être modifié.",
   },
 ];
 ---
@@ -33,7 +34,7 @@ const points = [
   <div class="wrap">
     <div class="sec-head reveal">
       <p class="kicker">Sécurité et confidentialité</p>
-      <h2>Les données de vos clients <em>restent les vôtres</em>.</h2>
+      <h2>Les dossiers de vos clients, <em>protégés et tracés</em>.</h2>
     </div>
     <ul class="sec-grid">
       {points.map(({ title, text }) => (
@@ -44,11 +45,11 @@ const points = [
 </section>
 
 <style>
-  .security { padding: clamp(4.5rem, 9vw, 7.5rem) 0; }
+  .security { background: #fff; border-bottom: 1px solid var(--line); padding: clamp(4.5rem, 9vw, 7.5rem) 0; scroll-margin-top: 4.5rem; }
   .kicker { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-ink); margin: 0 0 1rem; }
   h2 em { font-style: italic; font-weight: 500; color: var(--gold-ink); }
   .sec-grid { list-style: none; margin: 2.5rem 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.25rem; }
-  .sec-grid li { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 1.5rem; }
+  .sec-grid li { background: var(--paper); border: 1px solid var(--line); border-radius: 14px; padding: 1.5rem; }
   .sec-grid h3 { font-size: 1.45rem; margin-bottom: 0.4rem; }
   .sec-grid p { color: var(--muted); font-size: 0.93rem; margin: 0; }
   @media (max-width: 900px) { .sec-grid { grid-template-columns: 1fr 1fr; } }

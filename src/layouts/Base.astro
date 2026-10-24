@@ -54,6 +54,7 @@ const year = new Date().getFullYear();
         <a class="wordmark" href="/" aria-label="TunFortune, accueil">TunFortune<span class="dot" aria-hidden="true">.</span></a>
         <nav aria-label="Navigation principale">
           <a href="/#produit">Le produit</a>
+          <a href="/#diagnostic">Diagnostic</a>
           <a href="/#pilote">Programme pilote</a>
           <a href="/#faq">Questions</a>
           <a class="nav-cta" href="/#demo">Demander une démo</a>
@@ -78,6 +79,7 @@ const year = new Date().getFullYear();
               <li><a href="/#module-patrimoine">Patrimoine</a></li>
               <li><a href="/#module-evaluation">Évaluation immobilière</a></li>
               <li><a href="/#module-simulation">Simulation ISF × IRPP × Patrimoine</a></li>
+              <li><a href="/#diagnostic">Diagnostic d'optimisation</a></li>
               <li><a href="/#module-isf">Déclaration ISF</a></li>
               <li><a href="/#module-irpp">Déclaration IRPP</a></li>
             </ul>
@@ -86,6 +88,7 @@ const year = new Date().getFullYear();
             <p class="foot-h">Cabinets</p>
             <ul>
               <li><a href="/#pilote">Programme pilote</a></li>
+              <li><a href="/#securite">Sécurité des données</a></li>
               <li><a href="/#faq">Questions fréquentes</a></li>
               <li><a href="/#demo">Demander une démo</a></li>
             </ul>
@@ -130,11 +133,11 @@ const year = new Date().getFullYear();
   .bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4.5rem; padding-inline: var(--gutter); }
   .site-header .wordmark { color: #fff; font-size: 1.7rem; }
   nav { display: flex; align-items: center; gap: clamp(0.75rem, 2.5vw, 2rem); font-size: 0.9rem; }
-  nav a { color: #dfe4ec; text-decoration: none; font-weight: 500; }
+  nav a { color: #dfe4ec; text-decoration: none; font-weight: 500; white-space: nowrap; }
   nav a:hover { color: #fff; }
   .nav-cta { background: var(--gold); color: var(--navy) !important; font-weight: 600 !important; padding: 0.65rem 1.05rem; border-radius: 999px; }
   .nav-cta:hover { background: #d6ba82; }
-  @media (max-width: 640px) { nav a:not(.nav-cta) { display: none; } }
+  @media (max-width: 860px) { nav a:not(.nav-cta) { display: none; } }
 
   .site-footer { background: #070c16; color: #8f9bb0; padding-top: clamp(3.5rem, 7vw, 5.5rem); overflow: hidden; font-size: 0.9rem; }
   .foot-grid { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 2rem 3rem; padding-bottom: 2.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); }

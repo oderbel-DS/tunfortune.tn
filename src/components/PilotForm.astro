@@ -1,10 +1,16 @@
 ---
 import { SITE } from '../config';
+
+const avantEcheance = Date.now() < new Date(`${SITE.echeanceIsf}T00:00:00+01:00`).getTime();
 ---
 <form id="demo-form" class="form" data-email={SITE.email} action="https://api.web3forms.com/submit" method="POST" novalidate>
   <input type="hidden" name="access_key" value={SITE.web3formsKey} />
   <input type="hidden" name="subject" value="TunFortune : nouvelle demande de démo" />
   <input type="hidden" name="from_name" value="Site TunFortune" />
+  <!-- Sans JavaScript, Web3Forms renvoie vers la page de confirmation après l'envoi. -->
+  <input type="hidden" name="redirect" value={`${SITE.url}/merci`} />
+  <!-- Lien ou campagne d'origine de la visite, rempli par le script (paramètres utm_*, sinon site référent). -->
+  <input type="hidden" name="provenance" value="direct" />
   <input type="checkbox" name="botcheck" class="hp" tabindex="-1" autocomplete="off" aria-hidden="true" />
 
   <div class="grid">
@@ -46,6 +52,13 @@ import { SITE } from '../config';
     <textarea name="message" rows="4"></textarea>
   </label>
 
+  {avantEcheance && (
+    <label class="check" data-avant-echeance>
+      <input type="checkbox" name="priorite" value="Dossiers à revoir avant le 1er janvier 2027" />
+      <span>Je souhaite revoir des dossiers clients avant le 1<sup>er</sup> janvier 2027.</span>
+    </label>
+  )}
+
   <label class="consent">
     <input type="checkbox" name="consentement" value="oui" required />
     <span>J'accepte que ces informations soient utilisées pour me recontacter au sujet de TunFortune. <a href="/confidentialite">Politique de confidentialité</a></span>
@@ -59,6 +72,14 @@ import { SITE } from '../config';
   const form = document.getElementById('demo-form') as HTMLFormElement | null;
   const status = form?.querySelector('.status') as HTMLElement | null;
   const button = form?.querySelector('button[type="submit"]') as HTMLButtonElement | null;
+
+  const provenance = form?.querySelector('input[name="provenance"]') as HTMLInputElement | null;
+  const params = new URLSearchParams(location.search);
+  const utm = ['utm_source', 'utm_medium', 'utm_campaign'].map((k) => params.get(k)).filter(Boolean);
+  if (provenance && utm.length) provenance.value = utm.join(' / ');
+  else if (provenance && document.referrer && new URL(document.referrer).host !== location.host) {
+    provenance.value = new URL(document.referrer).host;
+  }
 
   form?.addEventListener('submit', async (e) => {
     e.preventDefault();
@@ -83,10 +104,10 @@ import { SITE } from '../config';
       });
       const data = await res.json();
       if (!res.ok || !data.success) throw new Error(data.message || 'Erreur');
+      // La page de confirmation est une page à part entière : chaque demande y est comptée par la mesure d'audience.
       form.reset();
-      status.textContent = 'Demande envoyée. Nous vous recontactons sous 48 heures ouvrées pour fixer la démo.';
-      status.classList.add('is-ok');
       button.textContent = 'Demande envoyée';
+      location.assign('/merci');
     } catch {
       const email = form.dataset.email || '';
       status.innerHTML = `La demande n'a pas pu être envoyée. Réessayez, ou écrivez directement à <a href="mailto:${email}">${email}</a>.`;
@@ -109,12 +130,12 @@ import { SITE } from '../config';
   }
   input:focus, select:focus, textarea:focus { border-color: var(--navy); outline: 3px solid color-mix(in srgb, var(--navy) 25%, transparent); outline-offset: 0; }
   textarea { resize: vertical; }
-  .consent { flex-direction: row; align-items: flex-start; gap: 0.6rem; font-weight: 400; margin-bottom: 1.4rem; }
-  .consent input { margin-top: 0.25rem; width: 1.1rem; height: 1.1rem; accent-color: var(--navy); flex: none; }
+  .consent, .check { flex-direction: row; align-items: flex-start; gap: 0.6rem; font-weight: 400; margin-bottom: 1.4rem; }
+  .check { margin-bottom: 0.9rem; }
+  .consent input, .check input { margin-top: 0.25rem; width: 1.1rem; height: 1.1rem; accent-color: var(--navy); flex: none; }
   .hp { position: absolute; left: -9999px; }
   button[disabled] { opacity: 0.7; cursor: progress; }
   .status { margin: 1rem 0 0; font-size: var(--step--1); }
   .status:empty { display: none; }
-  .status.is-ok { color: #1f6b45; font-weight: 600; }
   .status.is-error { color: #a1261b; font-weight: 600; }
 </style>

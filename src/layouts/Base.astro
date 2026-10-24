@@ -20,6 +20,9 @@ const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name} | La fiscali
 const canonical = new URL(Astro.url.pathname, Astro.site);
 const ogImage = new URL('/og.png', Astro.site);
 const year = new Date().getFullYear();
+// Le bandeau d'échéance n'est pas généré si le site est construit après la date ; sinon le script le retire.
+const echeance = new Date(`${SITE.echeanceIsf}T00:00:00+01:00`);
+const showEcheance = !noindex && Date.now() < echeance.getTime();
 ---
 <!doctype html>
 <html lang="fr">
@@ -45,19 +48,34 @@ const year = new Date().getFullYear();
     <meta property="og:image:alt" content="TunFortune : la fiscalité du patrimoine pour les cabinets d'expertise comptable" />
     <meta name="twitter:card" content="summary_large_image" />
     <script is:inline>document.documentElement.classList.add('js');</script>
+    {SITE.cfAnalyticsToken && (
+      <script is:inline defer src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon={JSON.stringify({ token: SITE.cfAnalyticsToken })}></script>
+    )}
     <slot name="head" />
   </head>
-  <body>
+  <body data-echeance={echeance.toISOString()}>
     <a class="skip" href="#contenu">Aller au contenu</a>
+    {showEcheance && (
+      <div class="echeance" data-avant-echeance>
+        <p>
+          <strong>ISF 2027</strong> : <span class="ech-long">le </span>patrimoine <span class="ech-long">de vos clients sera </span>apprécié au 1<sup>er</sup> janvier<span class="ech-long"> 2027</span><span class="countdown" hidden></span>.
+          <a href="/#demo">Préparer vos dossiers <span aria-hidden="true">→</span></a>
+        </p>
+      </div>
+    )}
     <header class="site-header">
       <div class="bar">
         <a class="wordmark" href="/" aria-label="TunFortune, accueil">TunFortune<span class="dot" aria-hidden="true">.</span></a>
         <nav aria-label="Navigation principale">
-          <a href="/#produit">Le produit</a>
-          <a href="/#diagnostic">Diagnostic</a>
-          <a href="/#pilote">Programme pilote</a>
-          <a href="/#faq">Questions</a>
-          <a class="nav-cta" href="/#demo">Demander une démo</a>
+          <ul class="nav-links" id="nav-links">
+            <li><a href="/#produit">Le produit</a></li>
+            <li><a href="/#diagnostic">Diagnostic</a></li>
+            <li><a href="/#securite">Sécurité</a></li>
+            <li><a href="/#pilote">Programme pilote</a></li>
+            <li><a href="/#faq">Questions</a></li>
+          </ul>
+          <a class="nav-cta" href="/#demo"><span class="cta-long">Demander une démo</span><span class="cta-short">Démo</span></a>
+          <button class="menu-btn" type="button" aria-expanded="false" aria-controls="nav-links" aria-label="Menu"><span aria-hidden="true"></span></button>
         </nav>
       </div>
     </header>
@@ -119,6 +137,34 @@ const year = new Date().getFullYear();
       } else {
         els.forEach((el) => el.classList.add('in'));
       }
+
+      // Échéance du 1er janvier : compte à rebours, puis retrait du bandeau et de la case du formulaire.
+      const joursRestants = Math.ceil((Date.parse(document.body.dataset.echeance ?? '') - Date.now()) / 86_400_000);
+      if (joursRestants > 0) {
+        document.querySelectorAll<HTMLElement>('.countdown').forEach((el) => {
+          el.textContent = joursRestants === 1 ? ', dans 1 jour' : `, dans ${joursRestants} jours`;
+          el.hidden = false;
+        });
+      } else {
+        document.querySelectorAll('[data-avant-echeance]').forEach((el) => el.remove());
+      }
+
+      // Menu mobile : sous 860 px, les liens passent dans un panneau ouvert par le bouton.
+      const header = document.querySelector<HTMLElement>('.site-header');
+      const menuBtn = document.querySelector<HTMLButtonElement>('.menu-btn');
+      const setMenu = (open: boolean) => {
+        header?.classList.toggle('open', open);
+        menuBtn?.setAttribute('aria-expanded', String(open));
+      };
+      menuBtn?.addEventListener('click', () => setMenu(!header?.classList.contains('open')));
+      header?.querySelectorAll('nav a').forEach((a) => a.addEventListener('click', () => setMenu(false)));
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && header?.classList.contains('open')) { setMenu(false); menuBtn?.focus(); }
+      });
+      document.addEventListener('click', (e) => {
+        if (header && !header.contains(e.target as Node)) setMenu(false);
+      });
+      matchMedia('(min-width: 861px)').addEventListener('change', (e) => { if (e.matches) setMenu(false); });
     </script>
   </body>
 </html>
@@ -132,12 +178,48 @@ const year = new Date().getFullYear();
   /* Mêmes marges que les grands titres pleine largeur de la page d'accueil */
   .bar { display: flex; align-items: center; justify-content: space-between; gap: 1rem; min-height: 4.5rem; padding-inline: var(--gutter); }
   .site-header .wordmark { color: #fff; font-size: 1.7rem; }
-  nav { display: flex; align-items: center; gap: clamp(0.75rem, 2.5vw, 2rem); font-size: 0.9rem; }
+  nav, .nav-links { display: flex; align-items: center; gap: clamp(0.75rem, 2.5vw, 2rem); font-size: 0.9rem; }
+  .nav-links { list-style: none; margin: 0; padding: 0; }
   nav a { color: #dfe4ec; text-decoration: none; font-weight: 500; white-space: nowrap; }
   nav a:hover { color: #fff; }
   .nav-cta { background: var(--gold); color: var(--navy) !important; font-weight: 600 !important; padding: 0.65rem 1.05rem; border-radius: 999px; }
   .nav-cta:hover { background: #d6ba82; }
-  @media (max-width: 860px) { nav a:not(.nav-cta) { display: none; } }
+  .cta-short, .menu-btn { display: none; }
+
+  .menu-btn { place-items: center; width: 2.75rem; height: 2.75rem; padding: 0; background: none; border: 1px solid rgba(255,255,255,0.22); border-radius: 999px; cursor: pointer; }
+  .menu-btn span, .menu-btn span::before, .menu-btn span::after { display: block; width: 1.1rem; height: 1.5px; background: #fff; transition: transform 200ms ease, background-color 200ms ease; }
+  .menu-btn span { position: relative; }
+  .menu-btn span::before, .menu-btn span::after { content: ''; position: absolute; left: 0; }
+  .menu-btn span::before { top: -6px; }
+  .menu-btn span::after { top: 6px; }
+  .open .menu-btn span { background: transparent; }
+  .open .menu-btn span::before { transform: translateY(6px) rotate(45deg); }
+  .open .menu-btn span::after { transform: translateY(-6px) rotate(-45deg); }
+
+  @media (max-width: 860px) {
+    .nav-links { display: none; }
+    .js .menu-btn { display: grid; }
+    .open .nav-links {
+      display: flex; flex-direction: column; align-items: stretch; gap: 0;
+      position: absolute; top: 100%; left: 0; right: 0;
+      background: var(--navy); padding: 0.25rem var(--gutter) 1rem;
+      border-bottom: 1px solid rgba(255,255,255,0.1); box-shadow: 0 18px 30px rgba(0,0,0,0.25);
+    }
+    .open .nav-links a { display: block; padding: 0.95rem 0; font-size: 1.05rem; }
+    .open .nav-links li + li { border-top: 1px solid rgba(255,255,255,0.08); }
+  }
+  @media (max-width: 480px) {
+    .cta-long { display: none; }
+    .cta-short { display: inline; }
+  }
+
+  .echeance { background: var(--navy-2); color: #c6cfdb; font-size: 0.85rem; line-height: 1.45; text-align: center; padding: 0.6rem var(--gutter); }
+  .echeance p { margin: 0 auto; max-width: none; }
+  .echeance strong { color: #fff; font-weight: 600; }
+  .echeance sup { line-height: 0; }
+  @media (max-width: 600px) { .ech-long { display: none; } }
+  .echeance a { color: var(--gold); font-weight: 600; text-decoration: none; white-space: nowrap; margin-left: 0.35rem; }
+  .echeance a:hover { text-decoration: underline; }
 
   .site-footer { background: #070c16; color: #8f9bb0; padding-top: clamp(3.5rem, 7vw, 5.5rem); overflow: hidden; font-size: 0.9rem; }
   .foot-grid { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 2rem 3rem; padding-bottom: 2.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); }

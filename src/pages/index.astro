@@ -35,11 +35,11 @@ const faq = [
   },
   {
     q: 'La déclaration produite est-elle conforme au formulaire officiel ?',
-    a: "La déclaration est générée au format du formulaire officiel, en arabe, prête à être revue et signée par votre cabinet.",
+    a: "La déclaration ISF est générée au format du formulaire officiel, en arabe, prête à être revue et signée par votre cabinet. Pour l'IRPP, TunFortune calcule l'impôt rubrique par rubrique, à reporter sur la déclaration.",
   },
   {
     q: "Et l'IRPP ?",
-    a: "Le module Déclaration IRPP (salaires, revenus fonciers, revenus de capitaux mobiliers) est en cours de finalisation. Il s'appuie sur les mêmes données client que le module ISF.",
+    a: "Le module Déclaration IRPP couvre les salaires et pensions, les revenus fonciers, les capitaux mobiliers, les BIC et BNC, les bénéfices agricoles, les revenus de source étrangère et les plus-values, pour les résidents comme pour les non-résidents. Il s'appuie sur les mêmes données client que le module ISF, et les scénarios de simulation chiffrent l'ISF et l'IRPP ensemble.",
   },
   {
     q: 'Combien de temps faut-il pour démarrer ?',
@@ -65,14 +65,14 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
   <!-- 1. Manifeste -->
   <section class="hero" style={`--motif:${motif}`}>
     <h1 class="manifesto">
-        <span class="line"><span>ISF, IRPP, immobilier estimé par l'<em>IA</em> :</span></span>{' '}
+        <span class="line"><span>ISF, IRPP, immobilier <em>au prix du marché</em> :</span></span>{' '}
         <span class="line"><span>le conseil patrimonial, chiffres à l'appui.</span></span>
       </h1>
     <div class="hero-foot-wrap">
       <div class="hero-foot">
         <p class="lede">
-          Simulez plusieurs scénarios ISF et IRPP pour chaque client, sur des valeurs immobilières estimées par
-          l'IA, et préparez de vrais rendez-vous de conseil. Puis produisez le formulaire officiel.
+          Simulez plusieurs scénarios ISF et IRPP pour chaque client, sur des valeurs immobilières estimées à
+          partir du marché, et préparez de vrais rendez-vous de conseil. Puis produisez la déclaration ISF officielle.
         </p>
         <div class="hero-cta">
           <div class="actions">
@@ -81,8 +81,8 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
           </div>
           <ul class="proof">
             <li>Simulation ISF × IRPP</li>
-            <li>Estimation immobilière par IA</li>
-            <li>Formulaire officiel en arabe</li>
+            <li>Estimation immobilière sur données de marché</li>
+            <li>Formulaire ISF officiel en arabe</li>
           </ul>
         </div>
       </div>
@@ -119,11 +119,12 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
           </div>
         </ModuleCard>
 
-        <ModuleCard title="Évaluation immobilière" icon="immo" id="module-evaluation" badge="IA"
-          text="Pour chaque bien, l'IA propose une estimation de sa valeur, que vous mettez à jour chaque année pour la nouvelle campagne. Vous ajustez l'estimation et validez la valeur retenue, conservée dans le dossier avec sa justification.">
+        <ModuleCard title="Évaluation immobilière" icon="immo" id="module-evaluation" badge="En option"
+          text="Pour chaque bien, TunFortune propose une estimation par comparaison avec des biens similaires du marché, accompagnée d'une note de fiabilité. Vous ajustez l'estimation et validez la valeur retenue, conservée dans le dossier avec sa justification, puis la mettez à jour à chaque campagne.">
           <div class="v-estim">
             <p class="v-label">Estimation proposée pour 2027</p>
             <p class="v-big">1 480 000 <small>TND</small></p>
+            <p class="v-fiab">Fiabilité B · 5 comparables</p>
             <p class="v-prev">Valeur retenue en 2026 : 1 395 000 TND</p>
             <p class="v-btns"><span>Ajuster</span><span class="dark">Valider la valeur</span></p>
           </div>
@@ -148,12 +149,13 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
           </div>
         </ModuleCard>
 
-        <ModuleCard title="Déclaration IRPP" icon="irpp" id="module-irpp" badge="Bientôt" soon
-          text="Salaires, revenus fonciers et revenus de capitaux mobiliers, exercice par exercice, sur les mêmes données client. Module en cours de finalisation.">
-          <div class="v-rows muted">
-            <p><span>Salaires</span><b>2026</b></p>
+        <ModuleCard title="Déclaration IRPP" icon="irpp" id="module-irpp"
+          text="Salaires, foncier, capitaux mobiliers, BIC et BNC, revenus étrangers, plus-values : l'IRPP de chaque exercice, calculé sur les mêmes données client, rectificatives et pénalités de retard comprises.">
+          <div class="v-rows">
+            <p><span>Traitements et salaires</span><b>2026</b></p>
             <p><span>Revenus fonciers</span><b>2026</b></p>
             <p><span>Capitaux mobiliers</span><b>2026</b></p>
+            <p><span>Plus-values sur titres</span><b>2026</b></p>
           </div>
         </ModuleCard>
       </ul>
@@ -294,7 +296,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
   }
   /* Le manifeste occupe toute la largeur de la page : la taille suit la largeur de l'écran */
   .manifesto {
-    font-size: calc((100vw - 2 * var(--gutter)) / 14.9); font-weight: 500; line-height: 0.98; letter-spacing: -0.02em;
+    font-size: calc((100vw - 2 * var(--gutter)) / 15.4); font-weight: 500; line-height: 0.98; letter-spacing: -0.02em;
     margin: 0 0 clamp(2.5rem, 6vw, 4.5rem); max-width: none; padding-inline: var(--gutter); white-space: nowrap;
   }
   @media (max-width: 700px) {
@@ -361,6 +363,7 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
   .v-label { margin: 0 0 6px; font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; font-weight: 600; color: var(--muted); }
   .v-big { margin: 0 0 6px; font: 600 30px/1 var(--serif); font-variant-numeric: lining-nums; }
   .v-big small { font: 600 11px var(--sans); color: var(--gold-ink); }
+  .v-fiab { margin: 0 0 4px; font-size: 11.5px; font-weight: 600; color: var(--gold-ink); }
   .v-prev { margin: 0 0 12px; font-size: 11.5px; color: var(--muted); }
   .v-btns { display: flex; justify-content: flex-end; gap: 6px; margin: 0; }
   .v-btns span { font-size: 11px; font-weight: 600; padding: 6px 10px; border: 1px solid var(--line); border-radius: 6px; }

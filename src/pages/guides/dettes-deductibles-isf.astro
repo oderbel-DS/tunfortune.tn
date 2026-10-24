@@ -1,0 +1,82 @@
+---
+import Guide from '../../layouts/Guide.astro';
+import { formatDt } from '../../lib/bareme-isf';
+
+// Exemple d'un immeuble en indivision (montants en millimes).
+const valeurImmeuble = 2_000_000_000n;
+const quotePart = 50n;
+const soldeDu = 300_000_000n;
+const valeurRetenue = (valeurImmeuble * quotePart) / 100n;
+---
+<Guide slug="dettes-deductibles-isf">
+  <p>
+    L'impôt sur la fortune est calculé sur la valeur des biens imposables, après déduction des dettes qui les
+    grèvent. Toutes les dettes ne sont pas déductibles : la note commune n°13/2026 en fixe les conditions, et une
+    exclusion y revient à plusieurs reprises, celle des garanties données au profit d'une société.
+  </p>
+
+  <h2>Quelles dettes sont déductibles ?</h2>
+  <p>
+    Sont déductibles les dettes et charges qui se rapportent <strong>exclusivement</strong> à un bien immobilier ou
+    mobilier, au sens du Code des droits réels. Elles comprennent notamment les dettes garanties par une sûreté
+    réelle, comme une <strong>hypothèque</strong> ou un <strong>privilège</strong>. Exemple type : le crédit
+    immobilier qui a financé un appartement loué, garanti par une hypothèque sur cet appartement.
+  </p>
+
+  <h3>Pour quel montant ?</h3>
+  <p>
+    Le montant déductible est celui de la dette exigible restant <strong>à la charge du contribuable au
+    1<sup>er</sup> janvier</strong> de l'année d'imposition : le capital restant dû à cette date, et non le montant
+    emprunté à l'origine. Le tableau d'amortissement ou une attestation de la banque permet de le justifier.
+  </p>
+
+  <h3>Bien en indivision</h3>
+  <p>
+    La quote-part s'applique à la valeur du bien, pas à la dette. La dette retenue est celle qui reste
+    effectivement à la charge du contribuable, qu'il ait emprunté seul ou avec les autres indivisaires.
+  </p>
+  <div class="table">
+    <table>
+      <tbody>
+        <tr><td>Valeur de l'immeuble au 1<sup>er</sup> janvier</td><td class="num">{formatDt(valeurImmeuble)}</td></tr>
+        <tr><td>Quote-part du contribuable</td><td class="num">{String(quotePart)}&nbsp;%</td></tr>
+        <tr><td>Valeur retenue</td><td class="num">{formatDt(valeurRetenue)}</td></tr>
+        <tr><td>Solde du crédit à sa charge au 1<sup>er</sup> janvier</td><td class="num">− {formatDt(soldeDu)}</td></tr>
+        <tr><th>Valeur nette imposable</th><th class="num">{formatDt(valeurRetenue - soldeDu)}</th></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <h2>Les garanties données au profit d'une société</h2>
+  <p>
+    Les sûretés réelles constituées <strong>au profit de sociétés</strong> ne sont jamais déductibles. La note
+    commune le répète à quatre reprises. Le cas typique : un dirigeant hypothèque son immeuble personnel pour
+    garantir un prêt accordé à sa société. L'immeuble porte la garantie, mais la dette est celle de la société :
+    elle ne réduit pas le patrimoine imposable du dirigeant.
+  </p>
+  <p>
+    À l'inverse, une dette personnelle du contribuable garantie par une hypothèque sur son propre bien reste
+    déductible dans les conditions ci-dessus.
+  </p>
+
+  <h2>Les dettes qui ne se rattachent à aucun bien</h2>
+  <p>
+    Un crédit à la consommation, un découvert ou un prêt familial qui ne finance ni ne grève aucun bien imposable
+    ne se rapporte exclusivement à aucun bien : il ne vient pas en déduction.
+  </p>
+
+  <h2>Les dettes liées à un bien exonéré</h2>
+  <p>
+    Une dette qui grève un bien exonéré, comme le crédit de la résidence principale, ne réduit pas la base
+    imposable : le bien n'y entre pas, sa dette non plus. La note ne le formule pas en ces termes, mais c'est la
+    lecture qui découle du calcul sur les seuls biens imposables, et celle retenue par TunFortune.
+  </p>
+
+  <h2>Les points à vérifier dans chaque dossier</h2>
+  <ul>
+    <li>Le solde de chaque crédit au 1<sup>er</sup> janvier, justifié par la banque.</li>
+    <li>Le bien auquel chaque dette se rapporte, et sa qualification : imposable ou exonéré.</li>
+    <li>Le bénéficiaire de chaque garantie : le contribuable lui-même, ou une société.</li>
+    <li>La part de la dette réellement à la charge du contribuable lorsque le bien est en indivision.</li>
+  </ul>
+</Guide>

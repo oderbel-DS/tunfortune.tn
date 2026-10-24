@@ -1,0 +1,230 @@
+---
+import Base from '../layouts/Base.astro';
+import { BAREME_ISF as b, formatDt, formatMillions } from '../lib/bareme-isf';
+
+const champs = [
+  {
+    name: 'immobilier',
+    label: 'Immobilier imposable',
+    aide: "Immeubles, terrains, droits réels et parts de SCI, pour la quote-part du client. Hors résidence principale, immeubles loués dont les revenus sont déclarés et biens professionnels.",
+  },
+  {
+    name: 'titres',
+    label: 'Titres et placements imposables',
+    aide: "Actions et parts sociales (hors participations directes d'au moins 50 % et sociétés de personnes), obligations, SICAV hors CEA.",
+  },
+  {
+    name: 'liquidites',
+    label: 'Comptes, créances et espèces',
+    aide: "Comptes courants d'associés, prêts consentis, espèces. Pour les dépôts bancaires hors comptes d'épargne, voir les points d'interprétation.",
+  },
+  {
+    name: 'meubles',
+    label: 'Autres biens meubles imposables',
+    aide: 'Véhicules de plus de 12 CV non professionnels, bateaux, bijoux, œuvres d’art.',
+  },
+];
+---
+<Base
+  title="Simulateur ISF : votre client est-il assujetti ?"
+  description={`Estimez en une minute le patrimoine net imposable et l'impôt sur la fortune d'un client, avec le barème ${b.annee} : seuil de ${formatMillions(b.seuil)}, taux appliqué à la totalité du patrimoine.`}
+>
+  <section class="s-hero">
+    <div class="wrap">
+      <p class="kicker">Simulateur ISF</p>
+      <h1>Votre client est-il <em>assujetti à l'ISF</em>&nbsp;?</h1>
+      <p class="lead">
+        Une première estimation en une minute, avant d'ouvrir le dossier : patrimoine net imposable, situation par
+        rapport au seuil de {formatMillions(b.seuil)} et impôt estimé.
+      </p>
+    </div>
+  </section>
+
+  <div class="wrap s-grid">
+    <form class="s-form" id="sim" novalidate>
+      <p class="s-step">Valeurs au 1<sup>er</sup> janvier, en dinars</p>
+      {champs.map((c) => (
+        <label>
+          <span class="l">{c.label}</span>
+          <span class="field"><input name={c.name} type="text" inputmode="decimal" autocomplete="off" placeholder="0" /><span class="unit">DT</span></span>
+          <span class="aide">{c.aide}</span>
+        </label>
+      ))}
+      <label class="dettes">
+        <span class="l">Dettes déductibles</span>
+        <span class="field"><input name="dettes" type="text" inputmode="decimal" autocomplete="off" placeholder="0" /><span class="unit">DT</span></span>
+        <span class="aide">
+          Solde au 1<sup>er</sup> janvier des crédits qui se rapportent exclusivement aux biens ci-dessus. Pas les
+          garanties données au profit d'une société. <a href="/guides/dettes-deductibles-isf">Lesquelles ?</a>
+        </span>
+      </label>
+      <p class="s-note">
+        Client non résident : ne comptez que ses biens situés en Tunisie. Enfants mineurs à charge : ajoutez leurs biens.
+        Les biens exonérés ne se comptent pas : <a href="/guides/biens-exoneres-isf">voir la liste</a>.
+      </p>
+    </form>
+
+    <aside class="s-result" aria-live="polite">
+      <p class="r-label">Patrimoine net imposable estimé</p>
+      <p class="r-base" id="r-base">0&nbsp;DT</p>
+      <p class="r-statut" id="r-statut" data-etat="vide">Saisissez les valeurs du patrimoine</p>
+      <div class="r-impot">
+        <span>Impôt estimé</span>
+        <strong id="r-impot">0&nbsp;DT</strong>
+      </div>
+      <p class="r-detail" id="r-detail">
+        En deçà de {formatDt(b.seuil)} de patrimoine net, aucun impôt n'est dû.
+      </p>
+      <p class="r-erreur" id="r-erreur" hidden></p>
+      <noscript><p class="r-detail">Le simulateur a besoin de JavaScript pour calculer.</p></noscript>
+      <div class="r-cta">
+        <p>Pour chiffrer chaque bien, documenter les positions retenues et produire la déclaration au format officiel :</p>
+        <a class="btn" href="/?utm_source=simulateur-isf#demo">Demander une démo de TunFortune</a>
+      </div>
+    </aside>
+  </div>
+
+  <div class="wrap s-foot">
+    <p>
+      <strong>Estimation indicative, pas un avis fiscal.</strong> Barème du référentiel {b.annee} de TunFortune
+      (article 88 de la loi n°2025-17 et note commune n°13/2026) : {b.tauxPalier1.texte} de la totalité du
+      patrimoine net de {formatDt(b.seuil)} à {formatDt(b.limitePalier)}, {b.tauxPalier2.texte} de la totalité
+      au-delà. Le barème applicable au patrimoine du 1<sup>er</sup> janvier {b.annee + 1} dépendra de la loi de
+      finances pour {b.annee + 1}. Les valeurs saisies restent dans votre navigateur : rien n'est envoyé.
+    </p>
+    <p>
+      Pour aller plus loin : <a href="/guides/isf-qui-est-concerne">qui est concerné et comment se calcule l'impôt</a>.
+    </p>
+  </div>
+</Base>
+
+<script>
+  import { BAREME_ISF as b, appliquerBareme, seuilAlerte, formatDt } from '../lib/bareme-isf';
+
+  const form = document.getElementById('sim') as HTMLFormElement;
+  const el = (id: string) => document.getElementById(id) as HTMLElement;
+  const [rBase, rStatut, rImpot, rDetail, rErreur] = ['r-base', 'r-statut', 'r-impot', 'r-detail', 'r-erreur'].map(el);
+  const actifs = ['immobilier', 'titres', 'liquidites', 'meubles'];
+  const deuxPaliers = b.limitePalier > b.seuil && b.tauxPalier1.texte !== b.tauxPalier2.texte;
+
+  // « 1 200 000 », « 1.200.000,500 », « 1200000.5 » → millimes ; vide → 0 ; illisible → null.
+  function lire(brut: string): bigint | null {
+    const v = brut.replace(/[\s  ]/g, '');
+    if (!v) return 0n;
+    let entier: string, frac = '';
+    let m = v.match(/^(\d{1,3}(?:\.\d{3})+)(?:,(\d{1,3}))?$/);
+    if (m) { entier = m[1].replace(/\./g, ''); frac = m[2] ?? ''; }
+    else if ((m = v.match(/^(\d+)(?:[,.](\d{1,3}))?$/))) { entier = m[1]; frac = m[2] ?? ''; }
+    else return null;
+    return BigInt(entier) * 1000n + BigInt(frac.padEnd(3, '0'));
+  }
+
+  function statut(texte: string, etat: string) {
+    rStatut.textContent = texte;
+    rStatut.dataset.etat = etat;
+  }
+
+  function calculer() {
+    const valeurs = new Map<string, bigint>();
+    const illisibles: string[] = [];
+    for (const input of form.querySelectorAll<HTMLInputElement>('input')) {
+      const v = lire(input.value);
+      input.toggleAttribute('aria-invalid', v === null);
+      if (v === null) illisibles.push(input.closest('label')?.querySelector('.l')?.textContent ?? input.name);
+      valeurs.set(input.name, v ?? 0n);
+    }
+    rErreur.hidden = illisibles.length === 0;
+    rErreur.textContent = illisibles.length ? `Montant illisible : ${illisibles.join(', ')}. Saisissez un nombre, par exemple 1 250 000.` : '';
+
+    const totalActifs = actifs.reduce((s, n) => s + (valeurs.get(n) ?? 0n), 0n);
+    const dettes = valeurs.get('dettes') ?? 0n;
+    const net = totalActifs > dettes ? totalActifs - dettes : 0n;
+    const r = appliquerBareme(net);
+    rBase.textContent = formatDt(net);
+    rImpot.textContent = formatDt(r.impot);
+
+    if (totalActifs === 0n && dettes === 0n) {
+      statut('Saisissez les valeurs du patrimoine', 'vide');
+      rDetail.textContent = `En deçà de ${formatDt(b.seuil)} de patrimoine net, aucun impôt n'est dû.`;
+      return;
+    }
+    if (r.palier === 'NON_ASSUJETTI') {
+      const proche = net >= seuilAlerte();
+      statut(proche ? 'Proche du seuil' : 'Non assujetti selon cette estimation', proche ? 'alerte' : 'non');
+      rDetail.textContent = `Il manque ${formatDt(b.seuil - net)} pour atteindre le seuil de ${formatDt(b.seuil)}.` +
+        (proche ? " À ce niveau, l'évaluation de chaque bien et le recensement des dettes déductibles méritent une attention particulière." : '') +
+        (dettes > totalActifs ? ' Les dettes saisies dépassent la valeur des biens.' : '');
+      return;
+    }
+    if (r.palier === 'PALIER_1') {
+      statut(deuxPaliers ? 'Assujetti, premier palier' : 'Assujetti', 'oui');
+      rDetail.textContent = `${r.taux?.texte} de la totalité du patrimoine net, et pas seulement de la part au-delà du seuil.` +
+        (deuxPaliers ? ` Au-delà de ${formatDt(b.limitePalier)}, le taux passe à ${b.tauxPalier2.texte}, lui aussi sur la totalité` +
+          (net === b.limitePalier ? ' : le patrimoine est exactement à cette limite.' : ` : marge de ${formatDt(b.limitePalier - net)}.`) : '');
+      return;
+    }
+    statut('Assujetti, second palier', 'oui');
+    const aLaLimite = appliquerBareme(b.limitePalier).impot;
+    rDetail.textContent = `${r.taux?.texte} de la totalité du patrimoine net, et pas seulement de la part au-delà de ${formatDt(b.limitePalier)}. ` +
+      `À ${formatDt(b.limitePalier)} pile, l'impôt serait de ${formatDt(aLaLimite)}.`;
+  }
+
+  form.addEventListener('input', calculer);
+  form.addEventListener('submit', (e) => e.preventDefault());
+  // Une valeur lisible est remise en forme à la sortie du champ : « 1250000 » → « 1 250 000 ».
+  form.addEventListener('focusout', (e) => {
+    const input = e.target as HTMLInputElement;
+    const v = lire(input.value);
+    if (v !== null && input.value.trim()) input.value = v === 0n ? '0' : formatDt(v).replace(/ DT$/, '');
+  });
+  calculer();
+</script>
+
+<style>
+  .s-hero { background: var(--navy); color: #fff; padding: clamp(3rem, 8vw, 5rem) 0 clamp(2.5rem, 6vw, 3.5rem); }
+  .kicker { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin: 0 0 1rem; }
+  h1 { font-size: var(--step-4); }
+  h1 em { font-style: italic; color: var(--gold); }
+  .lead { color: #c6cfdb; font-size: 1.1rem; max-width: 56ch; margin: 0; }
+
+  .s-grid { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); gap: clamp(1.5rem, 4vw, 3rem); align-items: start; padding-top: clamp(2rem, 5vw, 3.5rem); }
+  .s-form { background: var(--panel); border: 1px solid var(--line); border-radius: 14px; padding: clamp(1.25rem, 3vw, 2rem); }
+  .s-step { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--gold-ink); margin-bottom: 1.25rem; }
+  .s-step sup { line-height: 0; }
+  label { display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1.35rem; }
+  .l { font-weight: 600; font-size: 0.95rem; }
+  .field { position: relative; display: block; }
+  input { font: 500 1.1rem/1.4 var(--sans); font-variant-numeric: tabular-nums; color: var(--ink); width: 100%; padding: 0.7rem 3rem 0.7rem 0.85rem; border: 1.5px solid var(--line); border-radius: 6px; background: #fff; text-align: right; }
+  input:focus { border-color: var(--navy); outline: 3px solid color-mix(in srgb, var(--navy) 25%, transparent); outline-offset: 0; }
+  input[aria-invalid] { border-color: #a1261b; }
+  .unit { position: absolute; right: 0.85rem; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 0.9rem; pointer-events: none; }
+  .aide { color: var(--muted); font-size: var(--step--1); line-height: 1.5; }
+  .aide sup { line-height: 0; }
+  .dettes { padding-top: 1.25rem; border-top: 1px dashed var(--line); }
+  .s-note { font-size: var(--step--1); color: var(--muted); background: var(--navy-soft); border-radius: 8px; padding: 0.85rem 1rem; margin: 0; max-width: none; }
+
+  .s-result { position: sticky; top: 6rem; background: var(--navy); color: #c6cfdb; border-radius: 14px; padding: clamp(1.5rem, 3vw, 2rem); }
+  .r-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: #9aa6b8; margin-bottom: 0.4rem; }
+  .r-base { font-family: var(--serif); font-size: clamp(2.2rem, 1.6rem + 2vw, 3rem); font-weight: 600; color: #fff; line-height: 1.05; margin-bottom: 0.9rem; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
+  .r-statut { display: inline-block; font-weight: 600; font-size: 0.85rem; padding: 0.35rem 0.8rem; border-radius: 999px; background: rgba(255,255,255,0.08); color: #dfe4ec; margin-bottom: 1.25rem; }
+  .r-statut[data-etat="non"] { background: rgba(110, 190, 140, 0.16); color: #a8dcb9; }
+  .r-statut[data-etat="alerte"] { background: rgba(200, 169, 107, 0.2); color: var(--gold); }
+  .r-statut[data-etat="oui"] { background: var(--gold); color: var(--navy); }
+  .r-impot { display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; border-top: 1px solid rgba(255,255,255,0.12); border-bottom: 1px solid rgba(255,255,255,0.12); padding: 0.9rem 0; margin-bottom: 1rem; }
+  .r-impot strong { font-size: 1.4rem; color: #fff; font-variant-numeric: tabular-nums; }
+  .r-detail { font-size: 0.92rem; }
+  .r-erreur { color: #f2b8b0; font-weight: 600; font-size: 0.9rem; }
+  .r-cta { margin-top: 1.5rem; padding-top: 1.25rem; border-top: 1px solid rgba(255,255,255,0.12); }
+  .r-cta p { font-size: 0.9rem; }
+  .r-cta .btn { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+  .r-cta .btn:hover { background: #d6ba82; }
+
+  .s-foot { padding-block: 2rem clamp(3.5rem, 8vw, 6rem); color: var(--muted); font-size: var(--step--1); }
+  .s-foot p { max-width: 80ch; }
+  .s-foot sup { line-height: 0; }
+
+  @media (max-width: 860px) {
+    .s-grid { grid-template-columns: 1fr; }
+    .s-result { position: static; }
+  }
+</style>

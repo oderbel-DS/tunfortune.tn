@@ -256,11 +256,17 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
         <span class="line">à préparer maintenant.</span>
       </h2>
       <div class="context-cols reveal">
-        <p>
-          La loi n°2025-17 portant loi de finances pour 2026 a introduit un impôt sur la fortune. Pour la première
-          campagne, vos clients vont vous demander s'ils sont concernés, combien ils devront payer et ce qu'ils
-          peuvent encore faire avant le 1<sup>er</sup> janvier.
-        </p>
+        <div>
+          <p>
+            La loi n°2025-17 portant loi de finances pour 2026 a introduit un impôt sur la fortune. Pour la première
+            campagne, vos clients vont vous demander s'ils sont concernés, combien ils devront payer et ce qu'ils
+            peuvent encore faire avant le 1<sup>er</sup> janvier.
+          </p>
+          <p class="context-links">
+            <a href="/simulateur-isf">Vérifier en une minute si un client est assujetti <span aria-hidden="true">→</span></a>
+            <a href="/guides">Lire les guides ISF <span aria-hidden="true">→</span></a>
+          </p>
+        </div>
         <p>
           Répondre dossier par dossier sur tableur prend du temps, et la Note commune n°13/2026 laisse plusieurs
           points d'interprétation ouverts. TunFortune intègre ces règles, documente les positions retenues et vous
@@ -505,6 +511,9 @@ const motif = `url("data:image/svg+xml,${encodeURIComponent(
   .context h2 em { color: var(--gold-ink); }
   .context-cols { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(2rem, 6vw, 6rem); padding-top: 2rem; border-top: 1px solid var(--line); }
   .context-cols p { color: var(--muted); font-size: 1.05rem; line-height: 1.75; margin: 0; max-width: none; }
+  .context-cols .context-links { display: flex; flex-direction: column; align-items: flex-start; gap: 0.4rem; margin-top: 1.25rem; font-size: 0.98rem; }
+  .context-links a { font-weight: 600; color: var(--gold-ink); text-decoration: none; }
+  .context-links a:hover { text-decoration: underline; text-underline-offset: 3px; }
   @media (max-width: 700px) {
     .context h2 { font-size: clamp(2.2rem, 1rem + 5vw, 2.8rem); white-space: normal; }
     .context h2 .line { display: inline; }

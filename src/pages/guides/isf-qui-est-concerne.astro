@@ -1,0 +1,156 @@
+---
+import Guide from '../../layouts/Guide.astro';
+import { BAREME_ISF as b, appliquerBareme, formatDt, formatMillions } from '../../lib/bareme-isf';
+
+// Exemples calculés avec le barème du référentiel : le tableau reste juste si le barème change.
+const exemples = [2_900_000n, 3_000_000n, 4_800_000n, 5_000_000n, 5_010_000n, 6_200_000n].map((dt) => {
+  const base = dt * 1000n;
+  return { base, ...appliquerBareme(base) };
+});
+const libellePalier = { NON_ASSUJETTI: 'Non assujetti', PALIER_1: 'Premier palier', PALIER_2: 'Second palier' };
+
+// Effet de seuil : passage de la limite du premier palier à 10 000 DT au-dessus.
+const aLaLimite = appliquerBareme(b.limitePalier);
+const auDessus = appliquerBareme(b.limitePalier + 10_000_000n);
+const deuxPaliers = b.limitePalier > b.seuil && aLaLimite.taux?.texte !== auDessus.taux?.texte;
+---
+<Guide slug="isf-qui-est-concerne">
+  <p>
+    La loi n°2025-17 du 12 décembre 2025 portant loi de finances pour 2026 a remplacé, par son article 88, l'impôt
+    sur la fortune immobilière institué en 2023 par un impôt sur la fortune portant sur l'<strong>ensemble du
+    patrimoine</strong> : immeubles, mais aussi biens meubles, titres, comptes et créances. La note commune
+    n°13/2026 de l'administration fiscale en précise les modalités d'application.
+  </p>
+
+  <h2>Qui est assujetti ?</h2>
+  <p>
+    Les personnes physiques dont la <strong>valeur nette du patrimoine atteint ou dépasse {formatMillions(b.seuil)}</strong> au
+    1<sup>er</sup> janvier de l'année d'imposition. Le seuil s'apprécie sur le patrimoine net, c'est-à-dire après
+    déduction des dettes qui s'y rapportent (voir le guide sur les <a href="/guides/dettes-deductibles-isf">dettes
+    déductibles</a>), et sans les biens exonérés (voir le guide sur les <a href="/guides/biens-exoneres-isf">biens
+    exonérés</a>).
+  </p>
+
+  <h3>Résidents et non-résidents</h3>
+  <ul>
+    <li>Une personne <strong>résidente</strong> en Tunisie est imposée sur l'ensemble de son patrimoine, situé en Tunisie et à l'étranger.</li>
+    <li>Une personne <strong>non résidente</strong> n'est imposée que sur les biens situés en Tunisie.</li>
+  </ul>
+
+  <h3>Le patrimoine des enfants mineurs</h3>
+  <p>
+    Les biens des enfants mineurs dont le contribuable a la charge sont inclus dans sa propre déclaration. Ceux des
+    enfants majeurs n'y entrent pas, même lorsqu'ils sont mis à la disposition des parents : chaque enfant majeur
+    déclare son propre patrimoine. La minorité s'apprécie au 1<sup>er</sup> janvier de l'année d'imposition.
+  </p>
+
+  <h2>Une photographie au 1<sup>er</sup> janvier</h2>
+  <p>
+    Le fait générateur de l'impôt est la situation du patrimoine au <strong>1<sup>er</sup> janvier de l'année
+    d'imposition</strong>. Les biens sont retenus pour leur valeur réelle à cette date, et les dettes pour le solde
+    restant dû à cette même date. Une acquisition, une cession ou un remboursement intervenu en décembre change
+    donc la base de l'année suivante ; la même opération réalisée en janvier ne la change qu'un an plus tard.
+  </p>
+  <p class="note">
+    Le barème présenté ici est celui du référentiel {b.annee}. Celui qui s'appliquera au patrimoine du
+    1<sup>er</sup> janvier {b.annee + 1} dépendra de la loi de finances pour {b.annee + 1}.
+  </p>
+
+  <h2>Ce qui entre dans le patrimoine</h2>
+  <p>
+    Le principe est celui de l'<strong>universalité</strong> : tous les biens meubles et immeubles, corporels et
+    incorporels, entrent dans l'assiette, et seules les exonérations prévues par les textes en sortent. On y trouve
+    notamment :
+  </p>
+  <ul>
+    <li>les immeubles bâtis ou en construction, les terrains, les droits réels immobiliers (nue-propriété, usufruit…) et les parts de sociétés civiles immobilières ;</li>
+    <li>les véhicules, bateaux et avions de tourisme, les bijoux, les œuvres d'art et l'argent liquide ;</li>
+    <li>les actions et parts sociales, les obligations, les parts de SICAV et les créances (comptes courants d'associés, prêts consentis).</li>
+  </ul>
+  <p>
+    Un bien détenu en indivision n'est retenu que pour la <strong>quote-part</strong> du contribuable. Pour
+    certains placements sur lesquels la note commune ne se prononce pas (comptes courants, dépôts à terme, bons
+    du Trésor, fonds communs de placement), voir les <a href="/guides/biens-exoneres-isf#zones-grises">points
+    d'interprétation</a>.
+  </p>
+
+  <h3>Comment évaluer les biens</h3>
+  <p>
+    La valeur retenue est la valeur réelle au 1<sup>er</sup> janvier, déclarée spontanément par le contribuable,
+    et non le prix d'acquisition. L'administration peut la rectifier :
+  </p>
+  <ul>
+    <li>pour les immeubles et les biens meubles autres que les titres : sur la base d'une estimation ou d'une expertise ;</li>
+    <li>pour les valeurs mobilières cotées : d'après le cours ou la valeur de liquidation au 31 décembre de l'année précédente ;</li>
+    <li>pour les autres titres et parts sociales : d'après les valeurs comptables, une estimation, une expertise, un aveu ou une décision de justice.</li>
+  </ul>
+  <p>
+    Pour les immeubles, une estimation documentée par comparaison avec des ventes de biens similaires prépare
+    utilement un éventuel contrôle.
+  </p>
+
+  <h2>Le barème</h2>
+  <div class="table">
+    <table>
+      <thead><tr><th>Patrimoine net imposable</th><th>Impôt</th></tr></thead>
+      <tbody>
+        <tr><td>Moins de {formatDt(b.seuil)}</td><td>Non assujetti</td></tr>
+        {deuxPaliers ? (
+          <>
+            <tr><td>De {formatDt(b.seuil)} à {formatDt(b.limitePalier)} inclus</td><td>{b.tauxPalier1.texte} de la totalité du patrimoine net</td></tr>
+            <tr><td>Plus de {formatDt(b.limitePalier)}</td><td>{b.tauxPalier2.texte} de la totalité du patrimoine net</td></tr>
+          </>
+        ) : (
+          <tr><td>{formatDt(b.seuil)} et plus</td><td>{b.tauxPalier1.texte} de la totalité du patrimoine net</td></tr>
+        )}
+      </tbody>
+    </table>
+  </div>
+  <p>
+    Ce n'est <strong>pas un barème par tranches</strong> : le taux s'applique à la totalité du patrimoine net, et
+    pas seulement à la fraction qui dépasse le seuil. Dès que le seuil est atteint, l'impôt porte sur le premier
+    dinar.
+  </p>
+
+  <h3>Exemples</h3>
+  <div class="table">
+    <table>
+      <thead><tr><th class="num">Patrimoine net</th><th>Situation</th><th class="num">Impôt estimé</th></tr></thead>
+      <tbody>
+        {exemples.map((e) => (
+          <tr>
+            <td class="num">{formatDt(e.base)}</td>
+            <td>{libellePalier[e.palier]}{e.taux && ` (${e.taux.texte})`}</td>
+            <td class="num">{formatDt(e.impot)}</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  </div>
+  {deuxPaliers && (
+    <p>
+      <strong>L'effet de seuil.</strong> À {formatDt(b.limitePalier)}, l'impôt est de {formatDt(aLaLimite.impot)}.
+      À {formatDt(b.limitePalier + 10_000_000n)}, soit 10 000 DT de plus, il passe à {formatDt(auDessus.impot)} :
+      le taux du second palier s'applique alors à l'ensemble du patrimoine. Pour un patrimoine proche d'un seuil,
+      l'évaluation de chaque bien et le recensement des dettes déductibles méritent une attention particulière.
+    </p>
+  )}
+
+  <h2>Déclaration et paiement</h2>
+  <p>
+    L'impôt est déclaré et payé au plus tard <strong>à la fin du mois de juin</strong> de chaque année, sur une
+    déclaration annuelle dont le modèle est fixé par l'administration. Les biens exonérés y figurent aussi, dans
+    une partie distincte du formulaire. La déclaration est déposée selon le cas au lieu de l'établissement
+    principal, de la résidence principale ou, pour une personne sans activité ni résidence en Tunisie, du bien de
+    plus grande valeur.
+  </p>
+
+  <h2>Biens à l'étranger et conventions fiscales</h2>
+  <p>
+    Les règles de territorialité s'appliquent sous réserve des conventions fiscales tendant à éviter la double
+    imposition. Pour un résident qui possède des biens à l'étranger, la convention conclue avec le pays concerné
+    peut donc changer le traitement de ces biens, par exemple en ouvrant droit à un crédit de l'impôt sur la
+    fortune payé dans ce pays. La note commune n'en détaille pas le mécanisme : il se vérifie convention par
+    convention.
+  </p>
+</Guide>

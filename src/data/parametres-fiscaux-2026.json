@@ -1,0 +1,64 @@
+[
+  {
+    "annee": 2026,
+    "module": "ISF",
+    "cle": "ISF_LIMITE_PALIER",
+    "valeur": {
+      "montant": "5000000.000",
+      "devise": "TND"
+    },
+    "dateEffet": "2026-01-01",
+    "description": "Limite entre le palier à 0,5 % et le palier à 1 % (NC13/2026 §1.1)"
+  },
+  {
+    "annee": 2026,
+    "module": "ISF",
+    "cle": "ISF_PERIMETRE_ASSIETTE",
+    "valeur": {
+      "perimetre": "UNIVERSEL"
+    },
+    "dateEffet": "2026-01-01",
+    "description": "Assiette universelle : immeubles et meubles (art. 88 loi n°2025-17)"
+  },
+  {
+    "annee": 2026,
+    "module": "ISF",
+    "cle": "ISF_SEUIL_ASSUJETTISSEMENT",
+    "valeur": {
+      "montant": "3000000.000",
+      "devise": "TND"
+    },
+    "dateEffet": "2026-01-01",
+    "description": "En deçà : non assujetti (NC13/2026 §1.1)"
+  },
+  {
+    "annee": 2026,
+    "module": "ISF",
+    "cle": "ISF_TAUX_ALERTE_PREVENTIVE",
+    "valeur": {
+      "taux": "0.9"
+    },
+    "dateEffet": "2026-01-01",
+    "description": "Alerte préventive lorsque la base imposable atteint 90 % du seuil ISF"
+  },
+  {
+    "annee": 2026,
+    "module": "ISF",
+    "cle": "ISF_TAUX_PALIER_1",
+    "valeur": {
+      "taux": "0.005"
+    },
+    "dateEffet": "2026-01-01",
+    "description": "0,5 % sur la totalité du patrimoine net, palier [3, 5] MDT"
+  },
+  {
+    "annee": 2026,
+    "module": "ISF",
+    "cle": "ISF_TAUX_PALIER_2",
+    "valeur": {
+      "taux": "0.01"
+    },
+    "dateEffet": "2026-01-01",
+    "description": "1 % sur la totalité du patrimoine net, au-delà de 5 MDT (strictement)"
+  }
+]

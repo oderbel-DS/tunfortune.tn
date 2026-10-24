@@ -14,6 +14,8 @@ interface Props {
   title?: string;
   description?: string;
   noindex?: boolean;
+  // Bandeau d'échéance ISF : affiché par défaut sur les pages indexées.
+  echeance?: boolean;
 }
 const { title, description = SITE.description, noindex = false } = Astro.props;
 const fullTitle = title ? `${title} | ${SITE.name}` : `${SITE.name} | La fiscalité du patrimoine pour les cabinets d'expertise comptable`;
@@ -22,7 +24,7 @@ const ogImage = new URL('/og.png', Astro.site);
 const year = new Date().getFullYear();
 // Le bandeau d'échéance n'est pas généré si le site est construit après la date ; sinon le script le retire.
 const echeance = new Date(`${SITE.echeanceIsf}T00:00:00+01:00`);
-const showEcheance = !noindex && Date.now() < echeance.getTime();
+const showEcheance = (Astro.props.echeance ?? !noindex) && Date.now() < echeance.getTime();
 ---
 <!doctype html>
 <html lang="fr">
@@ -70,6 +72,7 @@ const showEcheance = !noindex && Date.now() < echeance.getTime();
           <ul class="nav-links" id="nav-links">
             <li><a href="/#produit">Le produit</a></li>
             <li><a href="/#diagnostic">Diagnostic</a></li>
+            <li><a href="/simulateur-isf">Simulateur ISF</a></li>
             <li><a href="/#securite">Sécurité</a></li>
             <li><a href="/#pilote">Programme pilote</a></li>
             <li><a href="/#faq">Questions</a></li>
@@ -109,6 +112,13 @@ const showEcheance = !noindex && Date.now() < echeance.getTime();
               <li><a href="/#securite">Sécurité des données</a></li>
               <li><a href="/#faq">Questions fréquentes</a></li>
               <li><a href="/#demo">Demander une démo</a></li>
+            </ul>
+          </div>
+          <div>
+            <p class="foot-h">Ressources</p>
+            <ul>
+              <li><a href="/simulateur-isf">Simulateur ISF</a></li>
+              <li><a href="/guides">Guides ISF</a></li>
             </ul>
           </div>
           <div>
@@ -164,7 +174,7 @@ const showEcheance = !noindex && Date.now() < echeance.getTime();
       document.addEventListener('click', (e) => {
         if (header && !header.contains(e.target as Node)) setMenu(false);
       });
-      matchMedia('(min-width: 861px)').addEventListener('change', (e) => { if (e.matches) setMenu(false); });
+      matchMedia('(min-width: 1081px)').addEventListener('change', (e) => { if (e.matches) setMenu(false); });
     </script>
   </body>
 </html>
@@ -196,7 +206,7 @@ const showEcheance = !noindex && Date.now() < echeance.getTime();
   .open .menu-btn span::before { transform: translateY(6px) rotate(45deg); }
   .open .menu-btn span::after { transform: translateY(-6px) rotate(-45deg); }
 
-  @media (max-width: 860px) {
+  @media (max-width: 1080px) {
     .nav-links { display: none; }
     .js .menu-btn { display: grid; }
     .open .nav-links {
@@ -222,7 +232,7 @@ const showEcheance = !noindex && Date.now() < echeance.getTime();
   .echeance a:hover { text-decoration: underline; }
 
   .site-footer { background: #070c16; color: #8f9bb0; padding-top: clamp(3.5rem, 7vw, 5.5rem); overflow: hidden; font-size: 0.9rem; }
-  .foot-grid { display: grid; grid-template-columns: 1.6fr repeat(3, 1fr); gap: 2rem 3rem; padding-bottom: 2.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .foot-grid { display: grid; grid-template-columns: 1.6fr repeat(4, 1fr); gap: 2rem 3rem; padding-bottom: 2.5rem; border-bottom: 1px solid rgba(255,255,255,0.08); }
   .foot-brand .wordmark { color: #fff; font-size: 2rem; margin: 0 0 0.6rem; }
   .foot-brand p:last-child { max-width: 30ch; }
   .foot-h { color: #fff; font-weight: 600; margin: 0 0 0.9rem; font-size: 0.8rem; letter-spacing: 0.08em; text-transform: uppercase; }

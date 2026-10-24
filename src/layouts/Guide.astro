@@ -1,0 +1,130 @@
+---
+import Base from './Base.astro';
+import { GUIDES, guideIndexable } from '../data/guides';
+import { SITE } from '../config';
+
+interface Props {
+  slug: string;
+}
+const guide = GUIDES.find((g) => g.slug === Astro.props.slug);
+if (!guide) throw new Error(`Guide inconnu : ${Astro.props.slug}`);
+const indexable = guideIndexable(guide);
+const autres = GUIDES.filter((g) => g.slug !== guide.slug);
+
+const dateFr = (iso: string) =>
+  new Date(`${iso}T12:00:00Z`).toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+const articleLd = {
+  '@context': 'https://schema.org',
+  '@type': 'Article',
+  headline: guide.titre,
+  description: guide.resume,
+  inLanguage: 'fr-TN',
+  dateModified: guide.majLe,
+  mainEntityOfPage: new URL(`/guides/${guide.slug}`, SITE.url).href,
+  publisher: { '@type': 'Organization', name: SITE.name, url: SITE.url },
+};
+const breadcrumbLd = {
+  '@context': 'https://schema.org',
+  '@type': 'BreadcrumbList',
+  itemListElement: [
+    { '@type': 'ListItem', position: 1, name: 'Accueil', item: SITE.url },
+    { '@type': 'ListItem', position: 2, name: 'Guides', item: new URL('/guides', SITE.url).href },
+    { '@type': 'ListItem', position: 3, name: guide.titre },
+  ],
+};
+---
+<Base title={guide.titre} description={guide.resume} noindex={!indexable} echeance>
+  {indexable && <script slot="head" type="application/ld+json" set:html={JSON.stringify(articleLd)} />}
+  {indexable && <script slot="head" type="application/ld+json" set:html={JSON.stringify(breadcrumbLd)} />}
+
+  <article class="guide">
+    <header class="g-head">
+      <div class="wrap">
+        <nav class="crumbs" aria-label="Fil d'Ariane">
+          <a href="/">Accueil</a> <span aria-hidden="true">/</span> <a href="/guides">Guides</a>
+        </nav>
+        <p class="kicker">Guide ISF</p>
+        <h1>{guide.titre}</h1>
+        <p class="meta">
+          Mis à jour le {dateFr(guide.majLe)}
+          {guide.relecture
+            ? <> · Relu par {guide.relecture.par} le {dateFr(guide.relecture.le)}</>
+            : <> · Relecture par un expert-comptable en cours</>}
+        </p>
+      </div>
+    </header>
+
+    <div class="wrap g-body">
+      <aside class="avert">
+        <strong>Information générale, pas un avis fiscal.</strong> Ce guide résume l'article 88 de la loi n°2025-17
+        portant loi de finances pour 2026 et la note commune n°13/2026. Chaque situation doit être examinée par un
+        expert-comptable ou un conseiller fiscal.
+      </aside>
+
+      <div class="prose">
+        <slot />
+      </div>
+
+      <aside class="g-cta">
+        <p class="g-cta-title">Votre client est-il concerné ?</p>
+        <p>Le simulateur estime en une minute le patrimoine net imposable et l'impôt, avec le barème du référentiel TunFortune.</p>
+        <div class="g-cta-actions">
+          <a class="btn btn-primary" href="/simulateur-isf">Ouvrir le simulateur ISF</a>
+          <a class="btn btn-secondary" href={`/?utm_source=guide-${guide.slug}#demo`}>Demander une démo</a>
+        </div>
+      </aside>
+
+      <nav class="autres" aria-label="Autres guides">
+        <p class="autres-h">Autres guides</p>
+        <ul>
+          {autres.map((g) => (
+            <li><a href={`/guides/${g.slug}`}>{g.titre}</a><span>{g.resume}</span></li>
+          ))}
+        </ul>
+      </nav>
+    </div>
+  </article>
+</Base>
+
+<style>
+  .g-head { background: var(--navy); color: #fff; padding: clamp(2.5rem, 6vw, 4.5rem) 0 clamp(2rem, 5vw, 3.5rem); }
+  .crumbs { font-size: var(--step--1); color: #8f9bb0; margin-bottom: 1.5rem; }
+  .crumbs a { color: #c6cfdb; text-decoration: none; }
+  .crumbs a:hover { color: #fff; }
+  .kicker { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold); margin: 0 0 1rem; }
+  .g-head h1 { font-size: var(--step-3); max-width: 24ch; }
+  .meta { color: #9aa6b8; font-size: var(--step--1); margin: 0; }
+
+  .g-body { max-width: 46rem; padding-block: clamp(2.5rem, 6vw, 4rem) clamp(3.5rem, 8vw, 6rem); }
+  .avert { background: var(--panel); border: 1px solid var(--line); border-left: 3px solid var(--gold); border-radius: 8px; padding: 1rem 1.25rem; font-size: var(--step--1); color: var(--muted); margin-bottom: 2.5rem; }
+  .avert strong { color: var(--ink); }
+
+  .prose :global(h2) { font-size: var(--step-2); font-weight: 600; margin-top: 2.5rem; }
+  .prose :global(h3) { font-size: 1.3rem; margin-top: 1.75rem; }
+  .prose :global(ul), .prose :global(ol) { padding-left: 1.25rem; margin: 0 0 1.25em; max-width: 66ch; }
+  .prose :global(li) { margin-bottom: 0.45em; }
+  .prose :global(.table) { overflow-x: auto; margin: 0 0 1.5rem; }
+  .prose :global(table) { width: 100%; border-collapse: collapse; font-size: 0.93rem; background: var(--panel); }
+  .prose :global(th), .prose :global(td) { text-align: left; padding: 0.65rem 0.8rem; border: 1px solid var(--line); vertical-align: top; }
+  .prose :global(th) { background: var(--navy-soft); font-weight: 600; }
+  .prose :global(td.num), .prose :global(th.num) { text-align: right; white-space: nowrap; }
+  .prose :global(.note) { background: var(--navy-soft); border-radius: 8px; padding: 1rem 1.25rem; font-size: 0.95rem; }
+  .prose :global(.note) :global(p:last-child) { margin-bottom: 0; }
+  .prose :global(sup) { line-height: 0; }
+
+  .g-cta { margin-top: 3rem; background: var(--navy); color: #c6cfdb; border-radius: 14px; padding: clamp(1.5rem, 4vw, 2.25rem); }
+  .g-cta-title { font-family: var(--serif); font-size: var(--step-2); font-weight: 600; color: #fff; line-height: 1.1; margin-bottom: 0.6rem; }
+  .g-cta-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.25rem; }
+  .g-cta .btn-primary { background: var(--gold); border-color: var(--gold); color: var(--navy); }
+  .g-cta .btn-primary:hover { background: #d6ba82; }
+  .g-cta .btn-secondary { background: transparent; color: #fff; border-color: rgba(255,255,255,0.3); }
+  .g-cta .btn-secondary:hover { border-color: #fff; }
+
+  .autres { margin-top: 3rem; }
+  .autres-h { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--gold-ink); }
+  .autres ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; }
+  .autres li { background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 1rem 1.25rem; }
+  .autres a { font-weight: 600; display: block; margin-bottom: 0.3rem; }
+  .autres span { color: var(--muted); font-size: var(--step--1); }
+</style>
